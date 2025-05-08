@@ -5,7 +5,7 @@ import RegisterForm from './components/RegisterForm';
 import Chatbot from './components/Chatbot';
 import './App.css';
 import logo from "./logo.png"; // Asegúrate de tener un logo en la ruta correcta
-
+//nada
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(!!localStorage.getItem("userId"));
