@@ -1,0 +1,1237 @@
+/* --- INICIO App.css --- */
+
+/* --- Estilos Base y Globales --- */
+body {
+  margin: 0;
+  /* Considera 'auto' si necesitas scroll vertical general, pero 'hidden' es común para layouts fijos */
+  overflow: hidden;
+  background-color: #000000; /* Fondo base para toda la página */
+  background-color: var(--color-background-dark); /* Fondo base para toda la página */
+}
+
+
+html, body{
+  width: 100%;
+  height: 100%;
+  /* display: flex; align-items: center; justify-content: center; */ /* Quitar esto de body/html si .App lo maneja */
+}
+
+/* --- Contenedor Principal (Layout General) --- */
+.chatbot-container {
+  display: flex;
+  flex-direction: row; /* Layout por defecto (escritorio) */
+  width: 100%;
+  height: 100%;
+  background-color: #2a2a2a; /* Fondo oscuro general del contenedor */
+  background-color: var(--color-background-dark); /* Fondo oscuro general del contenedor */
+  position: relative; /* Contexto para elementos posicionados */
+}
+
+/* --- Panel Izquierdo (Barra Lateral) --- */
+.izquierda {
+  display: flex; /* Visible por defecto en escritorio */
+  flex-direction: column;
+  justify-content: space-between; /* Empuja controles abajo */
+  align-items: center;
+  padding: 16px 0;
+  background-color: #1e1f22;
+  width: 64px; /* Ancho fijo en escritorio */
+  height: 100%; /* Altura completa */
+  border-right: 1px solid #333;
+  border-right: 1px solid var(--color-border-dark);
+  position: relative; /* Para elementos internos */
+  flex-shrink: 0; /* No encoger */
+}
+
+.top-buttons {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.bottom-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: auto; /* Empuja hacia abajo */
+  padding-bottom: 20px; /* Reducir padding inferior */
+  gap: 15px;
+}
+
+.bottom-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  /* height: 80px; */ /* Quitar altura fija, dejar que contenido defina */
+}
+
+.new-conversation,
+.token-settings-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10a37f;
+  
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+.token-settings-button:hover,
+.new-conversation:hover {
+  background-color: #0e8769;
+  background-color: var(--color-primary-hover);
+}
+/* --- Panel Central (Historial/PDFs) --- */
+.centro {
+  display: flex; /* Visible por defecto en escritorio */
+  flex-direction: column;
+  width: 420px; /* Ancho fijo en escritorio */
+  height: 100vh; /* Altura completa */
+  
+  background-color: #3f424a;
+  padding: 16px;
+  overflow-y: auto;
+  gap: 15px; /* Espacio entre elementos */
+  border-right: 1px solid #2a2a2a;
+  border-right: 1px solid var(--color-background-dark);
+  flex-shrink: 0; /* No encoger */
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+  color: white;
+  /* margin-bottom: 12px; */ /* Controlado por gap del contenedor */
+  width: 100%; /* Ocupa ancho del panel */
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 8px;
+  /* margin-bottom: 10px; */ /* Controlado por gap del contenedor */
+}
+
+.tab-button {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background-color: #2a2a2a;
+  color: white;
+  background-color: var(--color-background-dark);
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tab-button.active {
+  background-color: #10a37f;
+ 
+}
+.tab-button:hover:not(.active) {
+  background-color: #4a4f5a; /* Hover sutil */
+}
+
+.tab-content {
+  flex: 1; /* Ocupa espacio restante */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden; /* Para controlar scroll interno */
+}
+.tab-content > div { /* Para el div del selector de modelo */
+  padding: 10px;
+  background-color: #4a4f5a; /* Fondo para destacar */
+  border-radius: 6px;
+}
+.tab-content select { /* Estilo del select */
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e1e;
+  color: white;
+  margin-top: 5px;
+}
+
+/* --- Historial de Chats --- */
+.history-list {
+  color: white;
+  color: var(--color-text-light);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Ocupa espacio disponible en tab-content */
+  overflow-y: auto;
+  padding: 0; /* Padding controlado por items */
+  margin: 0;
+  list-style: none; /* Quitar puntos de lista */
+  border-radius: 8px; /* Bordes suaves */
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 12px;
+  margin-bottom: 4px; /* Espacio pequeño entre items */
+  color: #e0e0e0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  gap: 8px; /* Espacio entre nombre y botón */
+}
+.history-item:hover {
+  background-color: #4a4f5a;
+}
+.history-item.active {
+  background-color: #10a37f;
+ 
+  color: white;
+}
+.history-item .history-name {
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.history-item.active .history-name {
+  color: #ffffff; /* Asegurar blanco en activo */
+}
+
+/* Input para renombrar */
+.rename-input {
+  flex-grow: 1;
+  padding: 6px 8px;
+  border: 1px solid #10a37f;
+  border: 1px solid var(--color-primary);
+  background-color: #1e1e1e;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Botón de opciones (⋮) en el historial */
+.menu-wrapper {
+  position: relative;
+  
+}
+
+.history-item .menu-button { /* Botón ⋮ */
+  background: transparent;
+  color: #a0a0a0;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+  padding: 0;
+  margin: 0;
+}
+.history-item .menu-button:hover {
+  background-color: #4a4f5a;
+  color: white;
+}
+.history-item.active .menu-button {
+  color: white;
+}
+
+.menu-popup {
+  position: absolute;
+  top: 28px; /* Ajustar posición relativa al botón */
+  right: 0;
+  background-color: #2a2a2a;
+  background-color: var(--color-background-dark);
+  border-radius: 6px; /* Redondear esquinas */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  padding: 6px; /* Padding interno */
+  z-index: 10; /* Encima de otros items */
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Espacio entre opciones */
+  min-width: 120px; /* Ancho mínimo */
+}
+.menu-popup button { /* Estilo base para opciones */
+  background-color: transparent; /* Mejor transparente */
+  border: none;
+  width: 100%;
+  border-radius: 4px;
+  padding: 8px 12px; /* Ajustar padding */
+  color: #e0e0e0; /* Texto claro */
+  font-weight: 500; /* Peso normal */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  text-align: left;
+}
+.menu-popup button:hover {
+  background-color: #10a37f; /* Resaltar al pasar */
+  color: white;
+}
+/* Colores específicos si los necesitas */
+.menu-popup .delete-option:hover {
+  background-color: #cc0000; /* Rojo al pasar por borrar */
+  color: white;
+}
+
+/* --- Selector de PDF --- */
+.pdf-selector {
+  padding: 0; /* Padding ya en tab-content > div */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1; /* Ocupa espacio */
+  overflow: hidden; /* Control de scroll interno */
+}
+.pdf-selector h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #e0e0e0;
+}
+.pdf-selector ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto; /* Scroll para la lista */
+  flex-grow: 1;
+}
+.pdf-selector li {
+  padding: 30px 20px;
+  cursor: pointer;;
+  border-bottom: 1px solid #4a4f5a; /* Separador sutil */
+  color: #cccccc;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+.pdf-selector li:last-child {
+  border-bottom: none;
+}
+.pdf-selector li:hover {
+  background-color: #4a4f5a;
+  color: rgb(156, 167, 159);
+}
+.pdf-selector li.selected {
+  background-color: #10a37f;
+  color: white;
+  font-weight: bold;
+}
+.pdf-selector input[type="file"] {
+  margin-top: 10px;
+  color: #ccc; /* Estilo básico para input file */
+}
+.pdf-selector input[type="file"]::file-selector-button {
+  padding: 6px 10px;
+  border: 1px solid #10a37f;
+  border-radius: 4px;
+  background-color: #10a37f;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.pdf-selector input[type="file"]::file-selector-button:hover {
+  background-color: #0e8769;
+}
+
+
+/* --- Panel Derecho (Chat Principal) --- */
+.chatbot {
+  margin-top: 0px;
+  flex: 1; /* Ocupa el espacio restante */
+  background-color: #28292d;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 0; /* Sin bordes en layout base */
+  /* box-shadow: 30px 30px 100px #00000029; */ /* Quitar sombra */
+  /* margin: 24px; */ /* Sin márgenes */
+  overflow: hidden; /* Muy importante */
+  height: 100vh; /* Altura completa */
+}
+
+/* Historial de mensajes */
+.message-history {
+  flex-grow: 1; /* Ocupa todo el espacio vertical menos el input */
+  overflow-y: auto; /* Permite scroll */
+  padding: 20px; /* Espaciado interno */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre mensajes */
+  background-color: #28292d; /* Fondo del chat */
+}
+
+/* Contenedor individual de mensaje (avatar + burbuja) */
+.message-container {
+  display: flex;
+  align-items: flex-start; /* Alinear avatar arriba */
+  gap: 10px;
+  width: 100%;
+  /* margin-bottom: 8px; */ /* Controlado por gap del padre */
+}
+.message-container.user {
+  flex-direction: row-reverse; /* Usuario a la derecha */
+  justify-content: flex-start; /* Alinea contenido a la derecha */
+}
+.message-container.bot {
+  justify-content: flex-start; /* Bot a la izquierda */
+}
+
+/* Avatar */
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0; /* Evita que se encoja */
+  margin-top: 4px; /* Alinear un poco mejor con texto */
+}
+
+/* Burbuja del mensaje */
+.message {
+  max-width: 70%; /* Ancho máximo de burbuja */
+  padding: 10px 14px; /* Padding interno */
+  border-radius: 12px;
+  font-size: 1rem; /* Tamaño legible */
+  line-height: 1.5;
+  position: relative; /* Para posibles elementos internos */
+  word-wrap: break-word; /* Romper palabras largas */
+}
+.message.user {
+  background: linear-gradient(to right, #1fcd84, #4fe6e1); /* Azul */
+  color: white;
+  border-bottom-right-radius: 0; /* Esquina distintiva */
+  align-self: flex-end;
+}
+.message.bot {
+  background-color: #3a3a3a; /* Gris oscuro para bot */
+  color: #e0e0e0; /* Texto claro */
+  border-bottom-left-radius: 0; /* Esquina distintiva */
+  align-self: flex-start;
+}
+/* Estilo para Markdown dentro del mensaje */
+.message .message-content {
+  width: 100%;
+}
+.message .message-content p {
+  margin: 0; /* Quitar margen por defecto de <p> */
+  white-space: pre-wrap; /* Respeta saltos de línea y espacios */
+}
+.message .message-content pre { /* Estilo para bloques de código */
+  background-color: #1e1f22;
+  padding: 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+.message .message-content code { /* Estilo para código inline */
+  background-color: #1e1f22;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+/* --- Área de Input --- */
+.input-container {
+  display: flex;
+  padding: 10px 15px; /* Más padding */
+  background: #202020;
+  border-top: 1px solid #333;
+  align-items: center; /* Alinear verticalmente */
+  gap: 10px;
+  min-height: 60px; /* Altura mínima */
+  box-sizing: border-box;
+  margin-bottom: 30px;
+}
+
+.input { /* Input de texto principal */
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #3a3a3a;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 40px; /* Altura fija */
+  box-sizing: border-box;
+}
+.input:focus {
+  border-color: #10a37f;
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.3);
+}
+
+/* Botón Enviar */
+.enviar {
+  width: auto; /* Ancho según contenido */
+  min-width: 50px;
+  height: 40px;
+  padding: 0 15px; /* Padding horizontal */
+  font-family: inherit; /* Usar fuente general */
+  font-size: 1rem;
+  background: #10a37f; /* Color principal */
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.enviar:hover {
+  background-color: #0e8769;
+}
+.enviar:active {
+  background-color: #0c7a5d; /* Click más oscuro */
+}
+
+/* Botones de Upload (si los tienes en el input-container) */
+.upload-label {
+  background-color: #007bff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+.upload-label:hover {
+  background-color: #0056b3;
+}
+.upload-pdf, .upload-image { /* Inputs ocultos */
+  display: none;
+}
+
+
+/* --- Modal de Ajustes --- */
+.settings-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Más oscuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Encima de todo excepto quizás notificaciones */
+}
+
+.settings-modal {
+  background-color: #2a2a2a;
+  color: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%; /* Ancho relativo */
+  max-width: 400px; /* Máximo */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre elementos del modal */
+  z-index: 1051; /* Encima del backdrop */
+}
+.settings-modal h3 {
+  margin-top: 0;
+  margin-bottom: 10px; /* Espacio debajo del título */
+  font-size: 20px;
+  color: #10a37f;
+  text-align: center;
+}
+.settings-modal label {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 5px; /* Espacio antes del input/slider */
+}
+.settings-modal input[type="number"],
+.settings-modal input[type="range"] {
+  width: 100%; /* Ocupar ancho */
+  padding: 8px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #1c1c1c;
+  color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.settings-modal button { /* Botón genérico dentro del modal */
+   padding: 10px 15px;
+   border-radius: 6px;
+   border: none;
+   cursor: pointer;
+   font-weight: bold;
+   transition: background-color 0.2s;
+}
+.settings-modal .close-settings { /* Botón específico cerrar */
+  background-color: #10a37f;
+  color: white;
+  margin-top: 10px; /* Espacio arriba */
+}
+.settings-modal .close-settings:hover {
+  background-color: #0e8769;
+}
+/* Estilo específico para botón de AutoRead */
+.settings-modal button:not(.close-settings) {
+  background-color: #4a4f5a;
+  color: #e0e0e0;
+}
+.settings-modal button:not(.close-settings):hover {
+  background-color: #5a5f6a;
+}
+
+/* Sliders */
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre sliders */
+  /* padding: 16px; */ /* Sin padding extra si ya está en modal */
+  /* background-color: #1e1f22; */ /* Sin fondo extra */
+  border-radius: 10px;
+  color: white;
+  /* margin-bottom: 20px; */
+  /* box-shadow: 0 2px 10px rgba(0,0,0,0.3); */
+}
+.slider-group label {
+  font-weight: bold;
+  font-size: 14px;
+  display: flex; /* Alinear texto y slider */
+  flex-direction: column; /* Apilar texto encima de slider */
+  gap: 8px;
+}
+.slider-group input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #444;
+  outline: none;
+  transition: background 0.3s;
+  cursor: pointer;
+  padding: 0; /* Quitar padding por defecto */
+  border: none; /* Quitar borde por defecto */
+}
+.slider-group input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(to right, #10a37f, #007bff);
+  border-radius: 3px;
+}
+.slider-group input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: linear-gradient(to right, #10a37f, #007bff);
+  border-radius: 3px;
+}
+.slider-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px; /* Pulgar más grande */
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  border: 2px solid #10a37f;
+  box-shadow: 0 0 5px rgba(16,163,127,0.6);
+  margin-top: -5px; /* Centrar pulgar en la pista */
+  transition: 0.2s;
+}
+.slider-group input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  border: 2px solid #10a37f;
+  box-shadow: 0 0 5px rgba(16,163,127,0.6);
+  cursor: pointer;
+}
+.slider-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1); /* Agrandar al pasar */
+  box-shadow: 0 0 8px #00ffcc;
+}
+.slider-group input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px #00ffcc;
+}
+
+
+/* --- Toggle de Tema (Claro/Oscuro) --- */
+.vertical-toggle {
+  width: 34px;
+  height: 64px;
+  background-color: #1a1a1a; /* Fondo oscuro por defecto */
+  border-radius: 9999px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Espaciar iconos imaginarios */
+  align-items: center;
+  padding: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333; /* Borde sutil */
+}
+.vertical-toggle.light {
+  background-color: #e2e2e2; /* Fondo claro */
+  border-color: #ccc;
+}
+.vertical-toggle:hover {
+  background-color: #444; /* Hover oscuro */
+}
+.vertical-toggle.light:hover {
+  background-color: #d0d0d0; /* Hover claro */
+}
+
+.toggle-icon {
+  width: 24px; /* Tamaño del icono */
+  height: 24px;
+  border-radius: 50%;
+  background-color: #444; /* Fondo del icono móvil */
+  font-size: 16px; /* Tamaño del emoji/icono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* Centrar horizontalmente */
+  color: #fff; /* Color del emoji */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.vertical-toggle.light .toggle-icon {
+  background-color: #f0f0f0; /* Icono móvil claro */
+   color: #333; /* Emoji oscuro */
+}
+
+/* Posiciones del icono */
+.vertical-toggle.dark .toggle-icon {
+  transform: translate(-50%, 0px); /* Arriba */
+  top: 4px;
+}
+.vertical-toggle.light .toggle-icon {
+  transform: translate(-50%, 0px); /* Abajo */
+  top: calc(100% - 24px - 4px); /* Calcular posición abajo */
+}
+
+/* --- Estilos Tema Claro --- */
+body.light {
+  background-color: #f4f4f4;
+  color: #111;
+}
+body.light .chatbot-container { background-color: #e0e0e0; }
+body.light .izquierda { background-color: #ffffff; border-right-color: #ccc; }
+body.light .centro { background-color: #f0f0f0; border-right-color: #d0d0d0; }
+body.light .chatbot { background-color: #ffffff; }
+body.light .message-history { background-color: #ffffff; }
+body.light .input-container { background-color: #f0f0f0; border-top-color: #ccc; }
+body.light .input { background-color: #ffffff; color: #111; border-color: #ccc; }
+body.light .input:focus { border-color: #00ffa6; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); }
+body.light .enviar { background-color: #33f5ae; color: white; }
+body.light .enviar:hover { background-color: #68f146; }
+
+body.light .message.user { background: linear-gradient(to right, #4db053, #aae545); color: rgb(0, 0, 0); }
+body.light .message.bot { background-color: #b0b0b3; color: #111; } /* Gris claro para bot */
+
+body.light .search-input { background-color: #ffffff; color: #111; border-color: #ccc; }
+body.light .tab-button { background-color: #e0e0e0; color: #333; }
+body.light .tab-button:hover:not(.active) { background-color: #d0d0d0; }
+body.light .tab-button.active { background-color: #00ffa6; color: white; } /* Color activo tema claro */
+body.light .history-list { background-color: #f0f0f0; }
+body.light .history-item { color: #333; }
+body.light .history-item:hover { background-color: #e0e0e0; }
+body.light .history-item.active { background-color: #00ffa6; color: white; }
+body.light .history-item .menu-button { color: #888; }
+body.light .history-item .menu-button:hover { background-color: #d0d0d0; color: #111; }
+body.light .menu-popup { background-color: #ffffff; border-color: #ccc; }
+body.light .menu-popup button { color: #333; }
+body.light .menu-popup button:hover { background-color: #00ffa6; color: white; }
+body.light .menu-popup .delete-option:hover { background-color: #dc3545; color: white; }
+
+body.light .pdf-selector { color: #333; }
+body.light .pdf-selector li { color: #ffffff; border-bottom-color: #d0d0d0; }
+body.light .pdf-selector li:hover { background-color: #e0e0e0; color: #111; }
+body.light .pdf-selector li.selected { background-color: #00ffa6; color: white; }
+body.light .pdf-selector input[type="file"] { color: #555; }
+body.light .pdf-selector input[type="file"]::file-selector-button { background-color: #00ffa6; border-color: #007bff; color: white; }
+body.light .pdf-selector input[type="file"]::file-selector-button:hover { background-color: #57e755; }
+
+body.light .settings-modal-backdrop { background: rgba(0, 0, 0, 0.4); } /* Menos oscuro */
+body.light .settings-modal { background-color: #ffffff; color: #111; }
+body.light .settings-modal h3 { color: #000000; }
+body.light .settings-modal label { color: #000000; }
+body.light .settings-modal input { background-color: #f0f0f0; color: #111; border-color: #ccc; }
+body.light .settings-modal .close-settings { background-color: #00ffa6; color: white; }
+body.light .settings-modal .close-settings:hover { background-color: #0056b3; }
+body.light .settings-modal button:not(.close-settings) { background-color: #e0e0e0; color: #333; }
+body.light .settings-modal button:not(.close-settings):hover { background-color: #d0d0d0; }
+body.light .slider-group input[type="range"] { background: #ccc; }
+body.light .slider-group input[type="range"]::-webkit-slider-thumb { background: #007bff; border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.4); }
+body.light .slider-group input[type="range"]::-moz-range-thumb { background: #007bff; border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.4); }
+
+
+/* --- Autenticación (Login/Register) --- */
+.App { /* Contenedor para centrar login si es necesario */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  /* Fondo animado si se usa en la pantalla de login */
+   background: linear-gradient(45deg, #ffffff, #36b205, #02c386, #757978); 
+   background-size: 400% 400%; 
+   animation: gradientAnimation 5s ease infinite; 
+  position: relative;
+}
+@keyframes gradientAnimation { /* Si usas fondo animado */
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.auth-container {
+  background-color: rgba(42, 42, 42, 0.9); /* Fondo oscuro semitransparente */
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra más fuerte */
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #f0f0f0;
+  position: relative; /* Para z-index si hay fondo animado */
+  z-index: 1;
+}
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.auth-container form h2 {
+  color: #10a37f; /* Color principal */
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 300; /* Más ligero */
+  letter-spacing: 1px;
+}
+.auth-container form input[type="text"],
+.auth-container form input[type="email"],
+.auth-container form input[type="password"] {
+  padding: 12px 15px;
+  height: 45px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #4a4f5a;
+  color: #f0f0f0;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+.auth-container form input:focus {
+  border-color: #10a37f; /* Color principal al enfocar */
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.3);
+  background-color: #4a4f5a;
+  color: #f0f0f0;
+}
+.auth-container form button[type="submit"] {
+  padding: 12px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  outline: none;
+  background-color: #10a37f; /* Color principal */
+  color: white;
+  margin-top: 10px;
+}
+.auth-container form button[type="submit"]:hover {
+  background-color: #0e8769; /* Más oscuro al pasar */
+  transform: translateY(-1px); /* Pequeño levantamiento */
+  box-shadow: 0 4px 10px rgba(16, 163, 127, 0.2);
+}
+.toggle-auth-btn { /* Botón para cambiar entre login/register */
+  padding: 10px 15px;
+  border: 1px solid #10a37f; /* Borde con color principal */
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  outline: none;
+  background-color: transparent;
+  color: #10a37f; /* Color principal */
+  width: 100%;
+  box-sizing: border-box;
+}
+.toggle-auth-btn:hover {
+  background-color: rgba(16, 163, 127, 0.1); /* Fondo muy sutil */
+  color: #12c596; /* Más brillante */
+}
+
+/* Logo rebotando (si se usa en login) */
+.rebote {
+  width: 80px; /* Tamaño ajustado */
+  height: 80px;
+  position: absolute;
+  left: calc(50vw - 40px);
+  top: calc(50vh - 40px);
+  animation: bounce 6s linear infinite; /* Duración ajustada */
+  z-index: 0; /* Detrás del contenedor de login */
+  opacity: 0.5; /* Menos prominente */
+}
+.logo{
+  width: 35px;
+  height: 35px;
+}
+@keyframes bounce { /* Animación simplificada */
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(15vw, -15vh) scale(0.9) rotate(45deg); }
+  50% { transform: translate(0, 20vh) scale(1.1) rotate(-30deg); }
+  75% { transform: translate(-15vw, -10vh) scale(0.95) rotate(15deg); }
+}
+
+
+/* --- Botón Salir --- */
+.logout-container { /* Contenedor si es necesario */
+  display: flex;
+  justify-content: center;
+  
+}
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Icono a la izquierda */
+  width: 36px; /* Tamaño base (icono) */
+  height: 36px;
+  border: none;
+  border-radius: 18px; /* Redondo */
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.4s ease, background-color 0.4s ease, border-radius 0.4s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background: #555; /* Gris oscuro */
+  position: relative;
+  flex-shrink: 0;
+}
+.logout-button .sign {
+  width: 36px; /* Ancho fijo para icono */
+  height: 100%;
+  transition: width 0.4s ease, padding-left 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logout-button .sign svg {
+  width: 18px; /* Tamaño icono */
+  height: 18px;
+  fill: white;
+}
+.logout-button .text {
+  position: absolute;
+  right: 15px; /* Padding a la derecha del texto */
+  left: 36px; /* Empieza después del icono */
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  color: #ecf0f1;
+  font-size: 0.9em; /* Tamaño texto */
+  font-weight: 600;
+  transition: opacity 0.4s ease;
+  white-space: nowrap; /* Evita que el texto se rompa */
+}
+.logout-button:hover {
+  width: 100px; /* Ancho expandido */
+  border-radius: 8px; /* Esquinas más cuadradas */
+  background: #d9534f; /* Rojo al pasar */
+  z-index: 10; /* Encima de otros elementos */
+}
+.logout-button:hover .sign {
+  width: 30%; /* Reduce ancho icono relativo */
+  padding-left: 0; /* Ajustar si es necesario */
+  z-index: 10;
+}
+.logout-button:hover .text {
+  opacity: 1;
+  z-index: 10;
+}
+.logout-button:active {
+  transform: scale(0.98); /* Efecto click */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+
+
+/* ===================================================== */
+/* ========== PARA MÓVIL (SOLUCIÓN ENFOCADA) ========== */
+/* ===================================================== */
+@media (max-width: 768px) {
+  .App { /* Contenedor para centrar login si es necesario */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Fondo animado si se usa en la pantalla de login */
+     background: linear-gradient(45deg, #2a2a2a, #2a2a2a, #2a2a2a, #2a2a2a); 
+     background-size: 400% 400%; 
+     animation: gradientAnimation 5s ease infinite; 
+    position: relative;
+  }
+  /* 1. Base Estricta: Ocupar pantalla, sin scroll */
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: auto; /* Sin scroll aquí */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative; /* Ayuda en móviles */
+    background-color: #2a2a2a; /* Fondo */
+  }
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+  body {
+     display: flex; /* Convierte body en flex container */
+     flex-direction: column; /* Apila sus hijos */
+  }
+
+  /* 2. Contenedor Principal: Llenar body, sin scroll */
+  .chatbot-container {
+    flex: 1;          /* Crece para llenar el body */
+    width: 100%;
+    overflow: auto; /* Sin scroll aquí tampoco */
+    display: flex;    /* Organiza los paneles (fijos + chat) */
+    min-height: 0;    /* Seguridad flex */
+    position: relative; /* Para z-index de paneles fijos */
+    background-color: #2a2a2a; /* Tu fondo */
+  }
+
+  .chatbot-container .izquierda, .chatbot-container .centro {
+    flex-shrink: 0;   /* No se encogen */
+  }
+  .chatbot-container .izquierda.mobile-visible, .chatbot-container .centro.mobile-visible {
+    transform: translateX(0); /* Muestra los paneles fijos */
+}
+  /* 3. Paneles Laterales Fijos (Izquierda, Centro): Fuera del flujo */
+  .izquierda, .centro {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+    position: fixed;    /* <<< CLAVE: Están fuera del layout normal */
+    top: 0;
+    left: 0;
+    height: 100%;     /* Altura completa cuando visibles */
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll propio interno */
+    box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.3);
+    /* Asegúrate que no tengan márgenes que afecten */
+    margin: 0;
+    /* --- Tus estilos específicos para ellos --- */
+    padding-top: 60px; /* Espacio para botones toggle fijos */
+  }
+  .izquierda {
+    width: 65%; max-width: 100px; background-color: #1e1f22;
+    justify-content: flex-start; gap: 25px;
+  }
+  .centro {
+    width: 85%; max-width: 350px; background-color: #3f424a; /* Más ancho */
+  }
+  .izquierda.mobile-visible, .centro.mobile-visible {
+    transform: translateX(0);
+  }
+  .logo { /* Ajuste logo móvil */
+    margin-top: 20px; /* Menos margen si padding-top ya da espacio */
+    width: 35px; height: 35px;
+  }
+  .izquierda .top-buttons { padding-top: 20px; }
+  .izquierda .bottom-controls { padding-bottom: 20px; gap: 20px; margin-top: auto; }
+
+  /* --- 4. Panel del Chat Principal (.chatbot): EL CONTENEDOR CLAVE --- */
+  
+
+  /* --- 5. Historial de Mensajes: Flexible y con Scroll Interno --- */
+  .message-history {
+    flex-grow: 1;     /* <<< CRECE para llenar espacio vertical */
+    overflow-y: auto; /* <<< SCROLL INTERNO si se necesita */
+    min-height: 0;    /* <<< Permite encogerse si es necesario */
+    padding: 15px 10px; /* Más padding vertical */
+    background-color: #28292d; /* Fondo */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;        /* Espacio entre mensajes */
+    -webkit-overflow-scrolling: touch; /* Scroll suave iOS */
+  }
+  /* Estilos internos del historial (mensaje, avatar) */
+  .message-container { /* Asegura ancho completo dentro del historial */
+     width: 100%;
+     /* ... otros estilos de message-container ... */
+     display: flex; align-items: flex-start; gap: 10px;
+  }
+  .message-container.user { flex-direction: row-reverse; }
+  .message { max-width: 85%; padding: 8px 12px; font-size: 0.95rem; /* ... */ }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+  /* --- 6. Área de Input: Altura Fija, Sin Encogerse --- */
+ 
+  .input {
+    flex: 1; /* Ocupa espacio horizontal */
+    height: 40px;
+
+    padding: 8px 12px;
+    border-radius: 6px; border: 1px solid #555; background-color: #3a3a3a;
+    color: white; font-size: 1rem; outline: none;
+  }
+  .input:focus { border-color: #10a37f; }
+  .enviar {
+    flex-shrink: 0; width: 40px; height: 40px; min-width: 40px;
+    padding: 0; border-radius: 6px; background: #10a37f; color: white;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .enviar:hover { background: #0e8769; }
+
+
+  /* --- 7. Botones Flotantes y Backdrop (Asegurar z-index alto) --- */
+  .mobile-toggle-button {
+    display: flex !important; 
+    align-items: center; 
+    justify-content: center;
+    position: fixed; 
+    top: 30px;
+    
+    z-index: 1002 !important; /* Encima de todo */
+    background-color: #2a2a2a; 
+    color: white; 
+    border-color: #000000 !important;
+    border-radius: 50% ;
+    width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+    
+  }
+  .mobile-toggle-button:hover { background-color: #28292d; }
+  .mobile-left-toggle { left: 15px; }
+  .mobile-center-toggle { right: 15px; }
+
+  .mobile-backdrop {
+    display: block !important; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000; /* Debajo de paneles/botones, encima de chat */
+    opacity: 1; transition: opacity 0.3s ease;
+  }
+
+  /* --- Otros estilos móviles (simplificados) --- */
+  .search-input { margin: 0 10px 15px 10px; width: calc(100% - 20px); }
+  .tab-buttons { padding: 0 10px; margin-bottom: 15px; }
+  .tab-content { padding: 0 10px; display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+  .centro .history-list { flex-grow: 1; overflow-y: auto; } /* Scroll en historial dentro de panel central */
+  .settings-modal { width: 90vw; max-width: 350px; }
+  .auth-container { width: 90%; padding: 25px; }
+  .rebote { display: none; }
+  .logout-button { /* Botón logout simple círculo */
+    width: 40px; height: 40px; background: #dc3545; border-radius: 50%;
+    box-shadow: none; margin-top: 0; display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .logout-button .sign { width: auto; height: auto; }
+  .logout-button .sign svg { width: 20px; height: 20px; fill: white; }
+  .logout-button .text { display: none; }
+  .logout-button:hover { width: 40px; background: #c82333; border-radius: 50%; }
+  .vertical-toggle { width: 30px; height: 54px; }
+  .toggle-icon { width: 20px; height: 20px; font-size: 16px; } /* Icono más pequeño */
+  .vertical-toggle.dark .toggle-icon { top: 5px; } /* Ajustar posición */
+  .vertical-toggle.light .toggle-icon { top: calc(100% - 20px - 5px); }
+
+} /* Fin de @media (max-width: 768px) */
+
+
+/* --- Ocultar Elementos Móviles en Escritorio --- */
+/* Colocar DESPUÉS de la media query móvil */
+.mobile-toggle-button,
+.mobile-backdrop {
+  display: none;
+}
+
+/* --- Restaurar Estilos Escritorio (si es necesario) --- */
+/* Previene que estilos de transform/position/padding móvil afecten escritorio */
+@media (min-width: 769px) {
+  .izquierda,
+  .centro {
+    display: flex !important; /* Asegura visibilidad */
+    transform: none !important;
+    position: static !important;
+    height: 100vh !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+    overflow-y: auto !important;
+    padding-top: 16px !important; /* Restaura padding original */
+  }
+   .izquierda {
+      width: 64px;
+      border-right: 1px solid #333;
+      justify-content: space-between; /* Restaura justificado original */
+      padding: 16px 0; /* Restaura padding vertical original */
+    }
+  .centro {
+    width: 420px;
+    border-right: 1px solid #2a2a2a;
+    padding: 16px; /* Restaura padding original */
+  }
+  .chatbot {
+    z-index: auto;
+    /* Restaura márgenes/bordes si los tenías */
+    /* margin: 24px; */
+    /* border-radius: 20px; */
+  }
+  .logo {
+      margin-top: 0; /* Restaura margen original del logo */
+  }
+   .izquierda .bottom-controls {
+      padding-bottom: 20px; /* Restaura padding */
+      gap: 15px; /* Restaura gap */
+   }
+   .logout-button { /* Restaura botón logout escritorio */
+      width: 36px;
+      height: 36px;
+      background: #555;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      border-radius: 18px;
+   }
+    .logout-button .sign svg { width: 18px; height: 18px; }
+    .logout-button:hover { width: 100px; background: #d9534f; border-radius: 8px; z-index: 10;}
+    .logout-button:hover .text { opacity: 1; }
+    /* No es necesario ocultar .text aquí porque por defecto tiene opacity 0 */
+}
+
+/* --- FIN App.css --- */
