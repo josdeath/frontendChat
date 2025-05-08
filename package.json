@@ -2,6 +2,7 @@
   "name": "chatbot",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@capacitor/android": "^7.2.0",
     "@capacitor/cli": "^7.2.0",
