@@ -223,18 +223,18 @@ const renameConversation = async (index, newName) => {
       if (!userId) return;
   
       if (currentIndex === null) {
-        const name = newMessage.text.slice(0, 30) || "Conversación";
-        const saved = await saveConversation(userId, name, finalMessages);
-        if (saved.success) {
-          const updated = await getConversations(userId);
-          setHistory(updated);
-          setCurrentIndex(updated.length - 1);  // Actualiza el índice de la última conversación
-        }
-      } else {
+  const name = newMessage.text.slice(0, 30) || "Conversación";
+  const saved = await saveConversation(userId, name, finalMessages);
+  if (saved.success) {
+    await fetchServerHistory(); // Carga el historial invertido
+    setCurrentIndex(0);         // Selecciona el primero (el más reciente en la lista invertida)
+  }
+
+} else {
         const existingConv = history[currentIndex];
         if (existingConv?.id) {
           await updateConversation(existingConv.id, finalMessages);
-          await fetchServerHistory(); // Asegura que se recargue el historial
+          await fetchServerHistory(true); // Asegura que se recargue el historial
         }
       }
     } catch (err) {
