@@ -410,7 +410,7 @@ const Chatbot = () => {
                      title="Controla la aleatoriedad: más alto = más creativo, más bajo = más determinista"
                   />
                 </label>
-                <p>controla qué tan aleatorias son las respuestas de una IA; valores bajos (como 0.2) generan respuestas más precisas, mientras que valores altos (como 0.8) las hacen más creativas o impredecibles.</p>
+                <label>controla qué tan aleatorias son las respuestas de una IA; valores bajos (como 0.2) generan respuestas más precisas, mientras que valores altos (como 0.8) las hacen más creativas o impredecibles.</label>
                 {/* Slider Top-p */}
                 <label>
                   Top-p: {topP.toFixed(2)} {/* Muestra 2 decimales */}
