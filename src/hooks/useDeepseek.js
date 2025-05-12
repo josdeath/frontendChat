@@ -5,7 +5,7 @@ const useDeepseek = () => {
   const apiKey = CONFIG.DEEPSEEK_API_KEY; 
   const referer = CONFIG.OPENROUTER_REFERER || "https://itia.onrender.com/";
   const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
-
+console.log("🔑 Enviando API Key:", apiKey);
   const estimateTokens = (text) => Math.ceil(text.length / 4);
 
   // Función para generar contenido utilizando Deepseek
