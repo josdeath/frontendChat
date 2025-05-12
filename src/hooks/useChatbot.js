@@ -225,7 +225,7 @@ if (currentIndex === null) {
 
     // Buscar el nuevo chat por ID y seleccionarlo
     const updated = await getConversations(userId);
-    const reversed = updated.slice().reverse();
+    const reversed = updated.slice();
     const newIndex = reversed.findIndex(conv => conv.id === saved.id);
 
     if (newIndex !== -1) {
