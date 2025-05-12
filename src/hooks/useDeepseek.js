@@ -3,7 +3,7 @@ import CONFIG from "../config";
 const useDeepseek = () => {
   // Asegúrate de que estos valores están configurados correctamente en tu archivo CONFIG
   const apiKey = CONFIG.DEEPSEEK; 
-  const referer = CONFIG.OPENROUTER_REFERER || "https://openrouter.ai"; ;
+  const referer = CONFIG.OPENROUTER_REFERER || "https://github.com/josdeath/frontendChat"; ;
   const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
 
   const estimateTokens = (text) => Math.ceil(text.length / 4);
