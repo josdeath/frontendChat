@@ -22,8 +22,8 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": referer,
-          "X-Title": siteTitle,
+          "HTTP-Referer": "https://itia.onrender.com",
+          "X-Title": "Mi Chat App",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
