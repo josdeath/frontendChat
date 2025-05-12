@@ -216,27 +216,28 @@ const renameConversation = async (index, newName) => {
       const userId = localStorage.getItem("userId");
       if (!userId) return;
   
-     if (currentIndex === null) {
+if (currentIndex === null) {
   const name = newMessage.text.slice(0, 30) || "Conversación";
   const saved = await saveConversation(userId, name, finalMessages);
 
   if (saved.success && saved.id) {
-    await fetchServerHistory(true); // Preserva el índice actual
+    await fetchServerHistory(true); // recarga historial
+
+    // Buscar el nuevo chat por ID y seleccionarlo
     const updated = await getConversations(userId);
     const reversed = updated.slice().reverse();
-
     const newIndex = reversed.findIndex(conv => conv.id === saved.id);
+
     if (newIndex !== -1) {
       setCurrentIndex(newIndex);
       setMessages(reversed[newIndex].messages);
       localStorage.setItem("lastConversationIndex", newIndex);
-    } else {
-      console.warn("No se encontró la conversación recién creada en el historial.");
     }
 
     setHistory(reversed);
   }
 }
+
  else {
         const existingConv = history[currentIndex];
         if (existingConv?.id) {
