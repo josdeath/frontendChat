@@ -22,8 +22,7 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": referer,
-          "X-Title": siteTitle,
+          
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
