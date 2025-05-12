@@ -221,21 +221,18 @@ if (currentIndex === null) {
   const saved = await saveConversation(userId, name, finalMessages);
 
   if (saved.success && saved.id) {
-    await fetchServerHistory(true); // recarga historial
+  const updated = await getConversations(userId);
+  const reversed = updated.slice().reverse();
+  const newIndex = reversed.findIndex(conv => conv.id === saved.id);
 
-    // Buscar el nuevo chat por ID y seleccionarlo
-    const updated = await getConversations(userId);
-    const reversed = updated.slice().reverse();
-    const newIndex = reversed.findIndex(conv => conv.id === saved.id);
-
-    if (newIndex !== -1) {
-      setCurrentIndex(newIndex);
-      setMessages(reversed[newIndex].messages);
-      localStorage.setItem("lastConversationIndex", newIndex);
-    }
-
-    setHistory(reversed);
+  if (newIndex !== -1) {
+    setCurrentIndex(newIndex);
+    setMessages(reversed[newIndex].messages);
+    localStorage.setItem("lastConversationIndex", newIndex);
   }
+
+  setHistory(reversed);
+}
 }
 
  else {
