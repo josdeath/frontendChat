@@ -22,8 +22,8 @@ console.log("🔑 Enviando API Key:", apiKey);
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": "https://itia.onrender.com",
-          "X-Title": "Mi Chat App",
+          "HTTP-Referer": referer,
+          "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
