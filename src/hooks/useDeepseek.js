@@ -3,9 +3,9 @@ import CONFIG from "../config";
 const useDeepseek = () => {
   // Asegúrate de que estos valores están configurados correctamente en tu archivo CONFIG
   const apiKey = CONFIG.DEEPSEEK; 
-  const referer = CONFIG.OPENROUTER_REFERER || "https://itia.onrender.com/";
+  const referer = CONFIG.OPENROUTER_REFERER  ;
   const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
-console.log("🔑 Enviando API Key:", apiKey);
+
   const estimateTokens = (text) => Math.ceil(text.length / 4);
 
   // Función para generar contenido utilizando Deepseek
@@ -22,7 +22,7 @@ console.log("🔑 Enviando API Key:", apiKey);
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": referer,
+          "HTTP-Referer": "https://tu-sitio.com",
           "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
