@@ -419,6 +419,7 @@ const Chatbot = () => {
                      onChange={(e) => setTopP(parseFloat(e.target.value))}
                      title="Considera solo los tokens cuya probabilidad acumulada suma este valor"
                   />
+                  <p>Top-p</p>
                 </label>
               </div>
               {/* Botón AutoRead (Voz) */}
