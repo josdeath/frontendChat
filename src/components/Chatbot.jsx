@@ -423,7 +423,7 @@ const Chatbot = () => {
                   />
                  
                 </label>
-                <label>: limita la selección de palabras a un subconjunto con una probabilidad acumulada</label>
+                <label>Limita la selección de palabras a un subconjunto con una probabilidad acumulada</label>
               </div>
               {/* Botón AutoRead (Voz) */}
               <button onClick={() => setAutoRead(!autoRead)} title={autoRead ? "Desactivar lectura en voz alta" : "Activar lectura en voz alta"}>
