@@ -219,12 +219,23 @@ const renameConversation = async (index, newName) => {
       if (currentIndex === null) {
   const name = newMessage.text.slice(0, 30) || "Conversación";
   const saved = await saveConversation(userId, name, finalMessages);
-  if (saved.success) {
-    await fetchServerHistory(); // Carga el historial invertido
-    setCurrentIndex(0);         // Selecciona el primero (el más reciente en la lista invertida)
-  }
 
-} else {
+  if (saved.success) {
+    const updatedHistory = await getConversations(userId);
+    const reversed = updatedHistory.slice().reverse();
+
+    setHistory(reversed);
+
+    // Buscar el índice del chat recién creado
+    const newIndex = reversed.findIndex(conv => conv.id === saved.id);
+    const safeIndex = newIndex !== -1 ? newIndex : 0;
+
+    setMessages(reversed[safeIndex].messages);
+    setCurrentIndex(safeIndex);
+    localStorage.setItem("lastConversationIndex", safeIndex);
+  }
+}
+ else {
         const existingConv = history[currentIndex];
         if (existingConv?.id) {
           await updateConversation(existingConv.id, finalMessages);
