@@ -3,8 +3,8 @@ import CONFIG from "../config";
 const useDeepseek = () => {
   // Asegúrate de que estos valores están configurados correctamente en tu archivo CONFIG
   const apiKey = CONFIG.DEEPSEEK_API_KEY; 
-  const referer = CONFIG.OPENROUTER_REFERER || "https://tu-sitio.com";
-  const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
+  const referer = "https://itia.onrender.com/";
+  const siteTitle = "Mi Chat App";
 
   const estimateTokens = (text) => Math.ceil(text.length / 4);
 
