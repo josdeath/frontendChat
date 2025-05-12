@@ -410,7 +410,7 @@ const Chatbot = () => {
                      title="Controla la aleatoriedad: más alto = más creativo, más bajo = más determinista"
                   />
                 </label>
-                <label>controla qué tan aleatorias son las respuestas de una IA; valores bajos (como 0.2) generan respuestas más precisas, mientras que valores altos (como 0.8) las hacen más creativas o impredecibles.</label>
+                <label>controla qué tan aleatorias de las respuestas de una IA; valores bajos generan respuestas más precisas, mientras que valores altos las hacen más creativas o impredecibles.</label>
                 {/* Slider Top-p */}
                 <label>
                   Top-p: {topP.toFixed(2)} {/* Muestra 2 decimales */}
@@ -423,6 +423,7 @@ const Chatbot = () => {
                   />
                  
                 </label>
+                <label>: limita la selección de palabras a un subconjunto con una probabilidad acumulada</label>
               </div>
               {/* Botón AutoRead (Voz) */}
               <button onClick={() => setAutoRead(!autoRead)} title={autoRead ? "Desactivar lectura en voz alta" : "Activar lectura en voz alta"}>
