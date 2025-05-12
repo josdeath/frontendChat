@@ -2,8 +2,8 @@ import CONFIG from "../config";
 
 const useDeepseek = () => {
   // Asegúrate de que estos valores están configurados correctamente en tu archivo CONFIG
-  const apiKey = CONFIG.DEEPSEEK; 
-  const referer = CONFIG.OPENROUTER_REFERER || "https://github.com/josdeath/frontendChat"; ;
+  const apiKey = CONFIG.DEEPSEEK_API_KEY; 
+  const referer = CONFIG.OPENROUTER_REFERER || "https://tu-sitio.com";
   const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
 
   const estimateTokens = (text) => Math.ceil(text.length / 4);
@@ -22,7 +22,7 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": "https://github.com/josdeath/frontendChat",
+          "HTTP-Referer": referer,
           "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
@@ -72,7 +72,7 @@ const useDeepseek = () => {
 
     try {
       // Subir el archivo al servidor
-      const response = await fetch("https://backnode-60g0.onrender.com/upload", {
+      const response = await fetch("http://localhost:5001/upload", {
         method: "POST",
         body: formData,
       });
