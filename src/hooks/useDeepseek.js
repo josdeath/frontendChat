@@ -22,7 +22,7 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": "https://itia.onrender.com/",
+          "HTTP-Referer": "https://itia.onrender.com",
           "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
@@ -72,7 +72,7 @@ const useDeepseek = () => {
 
     try {
       // Subir el archivo al servidor
-      const response = await fetch("http://localhost:5001/upload", {
+      const response = await fetch("https://backnode-60g0.onrender.com/upload", {
         method: "POST",
         body: formData,
       });
