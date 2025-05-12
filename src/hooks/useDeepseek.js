@@ -22,7 +22,7 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": referer,
+          "HTTP-Referer": "https://github.com/josdeath/frontendChat",
           "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
