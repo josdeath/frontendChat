@@ -3,7 +3,8 @@ import CONFIG from "../config";
 const useDeepseek = () => {
   // Asegúrate de que estos valores están configurados correctamente en tu archivo CONFIG
   const apiKey = CONFIG.DEEPSEEK_API_KEY; 
-
+  const referer = CONFIG.OPENROUTER_REFERER || "https://tu-sitio.com";
+  const siteTitle = CONFIG.OPENROUTER_TITLE || "Mi Chat App";
 
   const estimateTokens = (text) => Math.ceil(text.length / 4);
 
@@ -17,23 +18,25 @@ const useDeepseek = () => {
       }
 
       // Realizar la solicitud a la API de Deepseek
-      const response = await fetch("https://api.deepseek.com/chat/completions", {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${apiKey}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    model: "deepseek-chat",
-    messages: messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    })),
-    max_tokens: maxOutputTokens,
-    temperature: temperature,
-    top_p: topP
-  }),
-});
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "HTTP-Referer": referer,
+          "X-Title": siteTitle,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek/deepseek-chat-v3-0324:free",  // Nombre del modelo
+          messages: messages.map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+          })),
+          max_tokens: maxOutputTokens, // Establece el máximo de tokens para la respuesta
+          temperature: temperature,
+          topP:topP
+        }),
+      });
 
       // Procesar la respuesta de la API
       const data = await response.json();
