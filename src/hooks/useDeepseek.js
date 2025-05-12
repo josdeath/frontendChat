@@ -22,7 +22,7 @@ const useDeepseek = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": "https://tu-sitio.com",
+          "HTTP-Referer": "https://itia.onrender.com/",
           "X-Title": siteTitle,
           "Content-Type": "application/json",
         },
