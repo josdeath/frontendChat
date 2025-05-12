@@ -332,7 +332,7 @@ const Chatbot = () => {
                 <option value="gemini-2.0">Gemini 2.0</option> 
               </optgroup>
               <optgroup label="DeepSeek">
-                 <option value="deepseek">DeepSeek</option>
+                 <option value="deepseek" disabled>DeepSeek</option>
               </optgroup>
               {/* Añade más modelos/grupos si es necesario */}
             </select>
