@@ -81,41 +81,35 @@ const fetchServerHistory = async (preserveIndex = false) => {
   if (!userId) return;
 
   try {
-    const result = await getConversations(userId); // Obtiene las conversaciones (asumimos oldest -> newest)
+    const result = await getConversations(userId);
+    const reversed = result.slice().reverse();
+    setHistory(reversed);
 
-    // 1. Invierte la lista para que la más nueva esté al principio (índice 0)
-    const reversed = result.slice().reverse(); // [newest, ..., oldest]
-    setHistory(reversed); // Guarda la lista invertida en el estado
+    const savedIndex = parseInt(localStorage.getItem("lastConversationIndex"), 10);
 
-    // 2. Si no se debe preservar el índice (carga inicial o nueva convo)
-    //    Y hay conversaciones en la lista invertida...
     if (!preserveIndex && reversed.length > 0) {
-      const newIndex = 0; // El índice 0 ahora apunta a la conversación MÁS NUEVA
-      setMessages(reversed[newIndex].messages); // Carga los mensajes de la más nueva
-      setCurrentIndex(newIndex); // Establece el índice actual a 0
-      console.log(`Historial cargado. Seleccionando la conversación más reciente (índice ${newIndex} en la lista invertida).`);
+      const indexToUse = !isNaN(savedIndex) && reversed[savedIndex]
+        ? savedIndex
+        : 0;
+
+      setMessages(reversed[indexToUse].messages);
+      setCurrentIndex(indexToUse);
     }
-    // 3. Si se debe preservar el índice y ese índice es válido en la lista invertida...
     else if (preserveIndex && currentIndex !== null && reversed[currentIndex]) {
-      // Asegúrate de que los mensajes se carguen si el índice se preserva
-      // (esto ya debería estar cubierto por la lógica existente, pero es bueno confirmarlo)
       setMessages(reversed[currentIndex].messages);
-      console.log(`Historial refrescado. Preservando índice ${currentIndex}.`);
     }
-    // 4. Si no hay historial después de obtenerlo...
     else if (reversed.length === 0) {
-        startNewConversation(); // Inicia una nueva conversación si no hay historial
-        console.log("No se encontró historial, iniciando nueva conversación.");
+      startNewConversation();
     }
 
   } catch (err) {
     console.error("❌ Error al cargar historial:", err);
-    // Considera manejar el error de forma más visual para el usuario
-     setMessages([{ text: "Error al cargar el historial.", sender: "bot" }]);
-     setHistory([]);
-     setCurrentIndex(null);
+    setMessages([{ text: "Error al cargar el historial.", sender: "bot" }]);
+    setHistory([]);
+    setCurrentIndex(null);
   }
 };
+
   
   
 const renameConversation = async (index, newName) => {
@@ -251,6 +245,7 @@ const renameConversation = async (index, newName) => {
     setCurrentIndex(null);
     setIsSaved(false);
     setSelectedPdf(null); // 👈 Añade esto para limpiar el PDF seleccionado
+      localStorage.removeItem("lastConversationIndex"); // 👈 Limpia selección previa
   };
   
 
@@ -258,6 +253,7 @@ const renameConversation = async (index, newName) => {
     if (history[index]) {
       setMessages(history[index].messages);
       setCurrentIndex(index);
+       localStorage.setItem("lastConversationIndex", index);
     }
   };
 
