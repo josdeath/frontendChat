@@ -19,6 +19,7 @@ import { FaBars, FaFolderOpen } from 'react-icons/fa';
 // import useChatbot from '../hooks/useChatbot';
 
 const Chatbot = () => {
+  
   // Estados y lógica del hook useChatbot
   const {
     selectedModel,
@@ -57,6 +58,61 @@ const Chatbot = () => {
   const [isLeftPanelMobileVisible, setIsLeftPanelMobileVisible] = useState(false);
   const [isCenterPanelMobileVisible, setIsCenterPanelMobileVisible] = useState(false);
   // -------------------------------------
+  //Generador de imagenes
+  const [showGenerator, setShowGenerator] = useState(false);//abrir generador de imagenes
+  const [imagePrompt, setImagePrompt] = useState("");
+const [generatedImage, setGeneratedImage] = useState(null);
+const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+const handleGenerateImage = async () => {
+  if (!imagePrompt.trim()) return;
+
+  setIsGeneratingImage(true);
+  setGeneratedImage(null);
+
+  try {
+    const apiKey = "6f17f13b7c40f613e17b5a1c91771e42ad65fe775832240f594c48056458cacda217b2b635e38d91a0e0d775e31b3a3d";
+
+    const form = new FormData();
+    form.append("prompt", imagePrompt); // campo obligatorio
+
+    const response = await fetch("https://clipdrop-api.co/text-to-image/v1", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        // NO pongas "Content-Type" si usas FormData, lo maneja automáticamente
+      },
+      body: form,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text(); // para entender el mensaje de error real
+      console.error("Respuesta de error:", errorText);
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    const base64Image = btoa(
+      new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    );
+
+    setGeneratedImage(`data:image/png;base64,${base64Image}`);
+  } catch (error) {
+    console.error("Error al generar la imagen:", error);
+    alert("Ocurrió un error al generar la imagen.");
+  } finally {
+    setIsGeneratingImage(false);
+  }
+};
+const descargarImagen = () => {
+    // Crea un enlace temporal
+    const enlace = document.createElement('a');
+    enlace.href = generatedImage;
+    enlace.download = 'imagen-generada.png'; // Nombre de archivo por defecto
+    enlace.click(); // Simula el click para iniciar la descarga
+  };
+
+
 
   // --- Efectos ---
   useEffect(() => {
@@ -336,6 +392,10 @@ const Chatbot = () => {
               </optgroup>
               {/* Añade más modelos/grupos si es necesario */}
             </select>
+            <button onClick={() => setShowGenerator(!showGenerator)}>
+  {showGenerator ? 'Cerrar Generador de Imágenes' : 'Abrir Generador de Imágenes'}
+</button>
+
           </div>
           {/* Contenido de la pestaña Chats */}
           {activeTab === "chats" && (
@@ -380,6 +440,7 @@ const Chatbot = () => {
           {/* Botón de Enviar */}
           <button onClick={handleSend} className="enviar" title="Enviar Mensaje">➤</button>
         </div>
+        
 
         {/* Modal de Ajustes - Se muestra condicionalmente */}
         {showTokenSettings && (
@@ -437,7 +498,36 @@ const Chatbot = () => {
           </div>
         )}
       </div> {/* Fin del div.chatbot */}
+      {showGenerator && (
+  <div className="image-generator">
+  <h4  style={{ color: "white" }}>Generador de Imágenes</h4>
+  <h5  style={{ color: "white" }}>Las imagenes no se guardan se deben descargar</h5>
+  <input
+    type="text"
+    placeholder="Describe la imagen que deseas generar..."
+    value={imagePrompt}
+    onChange={(e) => setImagePrompt(e.target.value)}
+    className="image-prompt-input"
+  />
+  <button onClick={handleGenerateImage} disabled={isGeneratingImage}>
+    {isGeneratingImage ? "Generando..." : "Generar Imagen"}
+  </button>
+  
+  {generatedImage && (
+    <div className="generated-image-container">
+<img
+  src={generatedImage}
+  alt="Imagen generada"
+  style={{ maxWidth: "400px", height: "auto", borderRadius: "8px" }}
+/>   
+ <br />
+   <button onClick={descargarImagen}>Descargar Imagen</button>
+</div>
+  )}
+</div>
+)}
     </div> // Fin del div.chatbot-container
+    
   );
 };
 

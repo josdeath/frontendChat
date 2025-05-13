@@ -1,6 +1,27 @@
 /* --- INICIO App.css --- */
 
 /* --- Estilos Base y Globales --- */
+.image-generator {
+  margin-top: 20px;
+  background-color: #1f1f1f;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.image-generator input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: none;
+}
+
+.image-result img {
+  margin-top: 10px;
+  max-width: 100%;
+  border-radius: 10px;
+}
+
 body {
   margin: 0;
   /* Considera 'auto' si necesitas scroll vertical general, pero 'hidden' es común para layouts fijos */
@@ -1235,3 +1256,4 @@ body.light .slider-group input[type="range"]::-moz-range-thumb { background: #00
 }
 
 /* --- FIN App.css --- */
+
