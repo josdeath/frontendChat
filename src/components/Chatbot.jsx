@@ -10,13 +10,7 @@ import { logout } from "../services/auth"; // Asegúrate que esta ruta sea corre
 // Importa los iconos que usarás para los botones de toggle
 import { FaBars, FaFolderOpen } from 'react-icons/fa'; 
 
-// Asegúrate de importar los subcomponentes si están en archivos separados
-// import MessageHistory from './MessageHistory';
-// import HistoryList from './HistoryList';
-// import PDFSelector from './PDFSelector';
 
-// Asegúrate que el hook useChatbot se importa correctamente
-// import useChatbot from '../hooks/useChatbot';
 
 const Chatbot = () => {
   
