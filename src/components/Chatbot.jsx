@@ -158,7 +158,7 @@ const descargarImagen = () => {
     }
 
     try {
-      // Reemplaza 'http://localhost/chatbot-api/' con la URL real de tu API si es diferente
+     
       const res = await fetch(`https://backnode-60g0.onrender.com/get_pdfs?userId=${userId}`);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
