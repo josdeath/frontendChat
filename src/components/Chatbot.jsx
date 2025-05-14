@@ -99,12 +99,19 @@ const handleGenerateImage = async () => {
   }
 };
 const descargarImagen = () => {
-    // Crea un enlace temporal
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // Abre la imagen en una nueva pestaña donde el usuario puede mantener pulsado y descargar
+    window.open(generatedImage, '_blank');
+    alert("Mantén pulsado sobre la imagen para descargarla.");
+  } else {
     const enlace = document.createElement('a');
     enlace.href = generatedImage;
-    enlace.download = 'imagen-generada.png'; // Nombre de archivo por defecto
-    enlace.click(); // Simula el click para iniciar la descarga
-  };
+    enlace.download = 'imagen-generada.png';
+    enlace.click();
+  }
+};
 
 
 
