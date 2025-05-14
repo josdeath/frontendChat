@@ -21,7 +21,7 @@ const useDeepseek = () => {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          "Authorization": `Bearer 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`,
           
           "Content-Type": "application/json",
         },

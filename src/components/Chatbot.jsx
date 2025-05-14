@@ -23,7 +23,7 @@ const Chatbot = () => {
     history,
     loadConversation,
     deleteConversation,
-    chatRef, // Ahora useRef está importado
+    chatRef, 
     startNewConversation,
     maxOutputTokens,
     setMaxOutputTokens,
@@ -382,7 +382,7 @@ const descargarImagen = () => {
                 <option value="gemini-2.0">Gemini 2.0</option> 
               </optgroup>
               <optgroup label="DeepSeek">
-                 <option value="deepseek" disabled>DeepSeek</option>
+                 <option value="deepseek" >DeepSeek</option>
               </optgroup>
               {/* Añade más modelos/grupos si es necesario */}
             </select>
