@@ -434,7 +434,7 @@ const descargarImagen = () => {
     className="input"
     
   />
-  <button onClick={handleSend} className="enviar" title="Enviar Mensaje">➤</button>
+  
   <SpeechToText
   onTranscription={(transcript) => {
     setInput(transcript);
@@ -442,7 +442,7 @@ const descargarImagen = () => {
     setInput(""); // limpia el input inmediatamente después de enviar
   }}
 />
-  
+  <button onClick={handleSend} className="enviar" title="Enviar Mensaje">➤</button>
 </div>
 
 
