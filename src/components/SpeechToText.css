@@ -1,0 +1,18 @@
+/* SpeechToText.css */
+.record-btn {
+    align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: #486eeb; /* rojo */
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.record-btn.recording {
+  background-color: #486eeb; /* verde */
+}

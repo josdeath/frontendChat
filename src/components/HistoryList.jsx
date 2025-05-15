@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 const HistoryList = ({
   history = [],
   loadConversation,

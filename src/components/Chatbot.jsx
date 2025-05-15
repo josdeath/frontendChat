@@ -6,7 +6,7 @@ import HistoryList from "./HistoryList";
 import PDFSelector from "./PDFSelector";
 import logo from "../logo.png";
 import { logout } from "../services/auth"; // Asegúrate que esta ruta sea correcta
-
+import SpeechToText from "./SpeechToText";
 // Importa los iconos que usarás para los botones de toggle
 import { FaBars, FaFolderOpen } from 'react-icons/fa'; 
 
@@ -42,6 +42,9 @@ const Chatbot = () => {
 
   // Otros estados del componente
   const [input, setInput] = useState("");
+  const handleTranscription = (transcript) => {
+  setInput(transcript);
+};
   const [showTokenSettings, setShowTokenSettings] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("chats");
@@ -421,19 +424,28 @@ const descargarImagen = () => {
         {/* Historial de Mensajes */}
         <MessageHistory messages={messages} chatRef={chatRef} />
         {/* Contenedor del Input */}
-        <div className="input-container">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            // Envía al presionar Enter
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-            placeholder="Escribe un mensaje..."
-            className="input"
-          />
-          {/* Botón de Enviar */}
-          <button onClick={handleSend} className="enviar" title="Enviar Mensaje">➤</button>
-        </div>
+<div className="input-container">
+  <input
+    type="text"
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+    placeholder="Escribe un mensaje..."
+    className="input"
+    
+  />
+  <button onClick={handleSend} className="enviar" title="Enviar Mensaje">➤</button>
+  <SpeechToText
+  onTranscription={(transcript) => {
+    setInput(transcript);
+    sendMessage({ text: transcript });
+    setInput(""); // limpia el input inmediatamente después de enviar
+  }}
+/>
+  
+</div>
+
+
         
 
         {/* Modal de Ajustes - Se muestra condicionalmente */}
