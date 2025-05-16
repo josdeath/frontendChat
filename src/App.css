@@ -1050,7 +1050,7 @@ body.light .slider-group input[type="range"]::-moz-range-thumb { background: #00
 
   /* 2. Contenedor Principal: Llenar body, sin scroll */
   .chatbot-container {
-    flex: 1;          /* Crece para llenar el body */
+              /* Crece para llenar el body */
     width: 100%;
     overflow: auto; /* Sin scroll aquí tampoco */
     display: flex;    /* Organiza los paneles (fijos + chat) */
@@ -1126,9 +1126,20 @@ body.light .slider-group input[type="range"]::-moz-range-thumb { background: #00
   .avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
 
   /* --- 6. Área de Input: Altura Fija, Sin Encogerse --- */
- 
+ .input-container {
+  width: 300px;
+  padding: 10px 15px; /* Más padding */
+  background: #202020;
+  border-top: 1px solid #333;
+  align-items: center; /* Alinear verticalmente */
+  gap: 10px;
+  min-height: 60px; /* Altura mínima */
+  box-sizing: border-box;
+  margin-bottom: 30px;
+}
   .input {
-    flex: 1; /* Ocupa espacio horizontal */
+    /* Ocupa espacio horizontal */
+    width: 150px;
     height: 40px;
 
     padding: 8px 12px;
@@ -1256,3 +1267,4 @@ body.light .slider-group input[type="range"]::-moz-range-thumb { background: #00
 }
 
 /* --- FIN App.css --- */
+
