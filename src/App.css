@@ -1,4 +1,22 @@
 /* --- INICIO App.css --- */
+/*--- boton copiar --- */
+.copy-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+ /*boton a la derecha del mensaje*/
+  position: absolute;
+  right: 10px; /* Ajusta según tu diseño */
+  top: 10px; /* Ajusta según tu diseño */
+  z-index: 10; /* Asegura que esté encima de otros elementos */
+}
+
+.copy-button:hover {
+  opacity: 1;
+}
 
 /* --- Estilos Base y Globales --- */
 .image-generator {

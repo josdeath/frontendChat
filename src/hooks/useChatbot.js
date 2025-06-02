@@ -110,7 +110,7 @@ const fetchServerHistory = async (preserveIndex = false) => {
   }
 };
 
-  
+
   
 const renameConversation = async (index, newName) => {
   const updated = [...history];

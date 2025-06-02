@@ -6,7 +6,7 @@ export const saveConversation = async (userId, name, messages) => {
   const res = await fetch("https://backnode-60g0.onrender.com/save_conversation", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json", // <--- cambia esto
+      "Content-Type": "application/json", // 
     },
     body: JSON.stringify({
       userId: parseInt(userId),

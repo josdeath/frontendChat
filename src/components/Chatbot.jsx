@@ -122,7 +122,7 @@ const descargarImagen = () => {
   useEffect(() => {
     // Cargar PDFs iniciales
     fetchPdfs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []); // Dependencia vacía para que se ejecute solo al montar
 
   useEffect(() => {
@@ -217,7 +217,7 @@ const descargarImagen = () => {
 
     // Encuentra el índice original en el array 'history' sin filtrar
     const originalIndex = history.findIndex((conv) => conv.id === selectedConv.id);
-
+    
     if (originalIndex !== -1) {
        loadConversation(originalIndex);
        // --- Cierra paneles móviles al seleccionar convo ---
