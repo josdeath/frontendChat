@@ -12,10 +12,12 @@
   right: 10px; /* Ajusta según tu diseño */
   top: 10px; /* Ajusta según tu diseño */
   z-index: 10; /* Asegura que esté encima de otros elementos */
+ 
 }
 
 .copy-button:hover {
   opacity: 1;
+   border-radius: 100%;
 }
 
 /* --- Estilos Base y Globales --- */
