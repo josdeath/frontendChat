@@ -20,7 +20,7 @@ const Message = ({ text, sender, image }) => {
       <div className="message-header">
         <img src={avatar} alt={sender} className="avatar" />
         {sender === "bot" && (
-          <button className="copy-button" onClick={handleCopy} title="Copiar mensaje">
+          <button className="copy-button" onClick={handleCopy} title="Copiar mensaje" style={{backgroundColor:"grey"}}>
             {copied ? "✅" : "📋"}
           </button>
         )}

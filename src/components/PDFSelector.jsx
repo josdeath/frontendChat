@@ -11,6 +11,7 @@ const PDFSelector = ({ availablePdfs, selectedPdf, onSelect, onUpload }) => {
   return (
     <div className="pdf-selector">
       <h3>📄 Tus PDFs</h3>
+      <p style={{color:"white"}}>Selecciona un PDF para usarlo en la conversación:</p>
       <ul>
         {availablePdfs.map((pdf, index) => (
           <li
