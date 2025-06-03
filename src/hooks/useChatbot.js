@@ -113,6 +113,7 @@ const useChatbot = () => {
       setHistory([]);
       setCurrentIndex(null);
     }
+    
   };
   
   const renameConversation = async (index, newName) => {
@@ -289,7 +290,15 @@ const useChatbot = () => {
         const name = text.slice(0, 30).trim() || `Conversación ${new Date().toLocaleTimeString()}`;
         const saved = await saveConversation(userId, name, finalMessagesToDisplayAndSave);
         if (saved.success && saved.id) {
-          await fetchServerHistory();
+          const newHistory = await getConversations(userId);
+          const reversed = newHistory.slice().reverse();
+          setHistory(reversed);
+          const newIndex = reversed.findIndex(conv => conv.id === saved.id);
+          if (newIndex !== -1) {
+            setMessages(reversed[newIndex].messages);
+            setCurrentIndex(newIndex);
+            localStorage.setItem("lastConversationIndex", newIndex.toString());
+          }
         }
       } else {
         const existingConv = history[currentIndex];
