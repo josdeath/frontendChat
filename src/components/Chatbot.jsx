@@ -430,7 +430,7 @@ const descargarImagen = () => {
     value={input}
     onChange={(e) => setInput(e.target.value)}
     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-    placeholder="Escribe un mensaje..."
+    placeholder="Escribe un mensaje o escribe *busca en internet* mas lo que quieras buscar.."
     className="input"
     
   />
