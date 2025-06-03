@@ -381,3 +381,29 @@ To https://github.com/josdeath/frontendChat.git
 2025-06-03 13:28:03,121 - INFO - Esperando 10 segundos antes del próximo intento...
 2025-06-03 13:28:05,851 - INFO - Cerrando aplicación de backup...
 2025-06-03 13:28:05,929 - INFO - Aplicación de backup cerrada limpiamente.
+2025-06-03 13:30:39,976 - INFO - Aplicación de backup iniciada.
+2025-06-03 13:30:41,368 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-03 13:30:41,369 - INFO - --- Intento de Backup 1/20 ---
+2025-06-03 13:30:41,372 - INFO - Iniciando intento de backup...
+2025-06-03 13:30:41,373 - INFO - Verificando conexión a GitHub...
+2025-06-03 13:30:41,443 - INFO - Conexión a GitHub establecida correctamente.
+2025-06-03 13:30:41,444 - INFO - Añadiendo cambios al staging area (git add .)...
+2025-06-03 13:30:41,446 - INFO - Ejecutando: git add .
+2025-06-03 13:30:41,556 - INFO - Add finalizado. Código de retorno: 0
+
+2025-06-03 13:30:41,557 - INFO - Ejecutando: git status --porcelain
+2025-06-03 13:30:41,642 - INFO - Status Check finalizado. Código de retorno: 0
+Salida estándar:
+M  .backup_info.txt
+MM backup_git.log
+M  github_backup.py
+
+2025-06-03 13:30:41,643 - INFO - Realizando commit con mensaje: 'backup 4 - 2025-06-03 13:30:41'...
+2025-06-03 13:30:41,647 - INFO - Ejecutando: git commit -m backup 4 - 2025-06-03 13:30:41
+2025-06-03 13:30:41,779 - INFO - Commit finalizado. Código de retorno: 0
+Salida estándar:
+[master 99bc35a] backup 4 - 2025-06-03 13:30:41
+ 3 files changed, 95 insertions(+), 2 deletions(-)
+
+2025-06-03 13:30:41,780 - INFO - Realizando push a GitHub (git push)...
+2025-06-03 13:30:41,786 - INFO - Ejecutando: git push
