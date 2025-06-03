@@ -407,3 +407,40 @@ Salida estándar:
 
 2025-06-03 13:30:41,780 - INFO - Realizando push a GitHub (git push)...
 2025-06-03 13:30:41,786 - INFO - Ejecutando: git push
+2025-06-03 13:30:42,375 - ERROR - Intento 1 excedió el tiempo límite de 0 minutos.
+2025-06-03 13:30:42,376 - INFO - Intento 1 finalizado en 1.00s con estado: TIMEOUT_ATTEMPT
+2025-06-03 13:30:42,384 - ERROR - Intento 1 falló. Estado: TIMEOUT_ATTEMPT
+2025-06-03 13:30:42,387 - INFO - Esperando 10 segundos antes del próximo intento...
+2025-06-03 13:30:43,746 - INFO - Push finalizado. Código de retorno: 0
+Salida de error:
+To https://github.com/josdeath/frontendChat.git
+   c30cc18..99bc35a  master -> master
+
+2025-06-03 13:30:43,748 - INFO - Intento de Backup número 4 completado y subido exitosamente en 2.38 segundos.
+2025-06-03 13:30:52,395 - INFO - --- Intento de Backup 2/20 ---
+2025-06-03 13:30:52,397 - INFO - Iniciando intento de backup...
+2025-06-03 13:30:52,421 - INFO - Verificando conexión a GitHub...
+2025-06-03 13:30:52,492 - INFO - Conexión a GitHub establecida correctamente.
+2025-06-03 13:30:52,495 - INFO - Añadiendo cambios al staging area (git add .)...
+2025-06-03 13:30:52,505 - INFO - Ejecutando: git add .
+2025-06-03 13:30:52,633 - INFO - Add finalizado. Código de retorno: 0
+
+2025-06-03 13:30:52,634 - INFO - Ejecutando: git status --porcelain
+2025-06-03 13:30:52,711 - INFO - Status Check finalizado. Código de retorno: 0
+Salida estándar:
+M  .backup_info.txt
+MM backup_git.log
+
+2025-06-03 13:30:52,712 - INFO - Realizando commit con mensaje: 'backup 5 - 2025-06-03 13:30:52'...
+2025-06-03 13:30:52,720 - INFO - Ejecutando: git commit -m backup 5 - 2025-06-03 13:30:52
+2025-06-03 13:30:52,906 - INFO - Commit finalizado. Código de retorno: 0
+Salida estándar:
+[master 7dd0b2c] backup 5 - 2025-06-03 13:30:52
+ 2 files changed, 27 insertions(+), 1 deletion(-)
+
+2025-06-03 13:30:52,907 - INFO - Realizando push a GitHub (git push)...
+2025-06-03 13:30:52,913 - INFO - Ejecutando: git push
+2025-06-03 13:30:53,401 - ERROR - Intento 2 excedió el tiempo límite de 0 minutos.
+2025-06-03 13:30:53,402 - INFO - Intento 2 finalizado en 1.01s con estado: TIMEOUT_ATTEMPT
+2025-06-03 13:30:53,406 - ERROR - Intento 2 falló. Estado: TIMEOUT_ATTEMPT
+2025-06-03 13:30:53,408 - INFO - Esperando 10 segundos antes del próximo intento...
