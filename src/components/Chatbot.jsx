@@ -532,6 +532,7 @@ const descargarImagen = () => {
   )}
 </div>
 )}
+{ /* prueba script*/}
     </div> // Fin del div.chatbot-container
     
   );
