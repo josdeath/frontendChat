@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 LOG_FILE = "backup_git.log"
 BACKUP_INFO_FILE = ".backup_info.txt" # Archivo para guardar el número del último backup
 MAX_RETRIES = 20
-ATTEMPT_TIMEOUT_SECONDS = 5 * 60  # 5 minutos
+ATTEMPT_TIMEOUT_SECONDS = 1  # 5 minutos
 RETRY_DELAY_SECONDS = 10 # Tiempo de espera entre reintentos
 
 # --- Configuración del Logging ---
