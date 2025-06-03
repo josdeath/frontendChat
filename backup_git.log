@@ -1,1 +1,37 @@
 2025-06-03 12:54:21,282 - INFO - Aplicación de backup iniciada.
+2025-06-03 12:54:29,973 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-03 12:54:29,975 - INFO - --- Intento de Backup 1/20 ---
+2025-06-03 12:54:29,979 - INFO - Iniciando intento de backup...
+2025-06-03 12:54:29,983 - INFO - Verificando conexión a GitHub...
+2025-06-03 12:54:30,109 - INFO - Conexión a GitHub establecida correctamente.
+2025-06-03 12:54:30,111 - INFO - Añadiendo cambios al staging area (git add .)...
+2025-06-03 12:54:30,112 - INFO - Ejecutando: git add .
+2025-06-03 12:54:30,238 - INFO - Add finalizado. Código de retorno: 0
+
+2025-06-03 12:54:30,240 - INFO - Ejecutando: git status --porcelain
+2025-06-03 12:54:30,318 - INFO - Status Check finalizado. Código de retorno: 0
+Salida estándar:
+AM backup_git.log
+A  github_backup.py
+M  src/components/Chatbot.jsx
+
+2025-06-03 12:54:30,319 - INFO - Realizando commit con mensaje: 'backup 1 - 2025-06-03 12:54:30'...
+2025-06-03 12:54:30,323 - INFO - Ejecutando: git commit -m backup 1 - 2025-06-03 12:54:30
+2025-06-03 12:54:30,479 - INFO - Commit finalizado. Código de retorno: 0
+Salida estándar:
+[master f6efb78] backup 1 - 2025-06-03 12:54:30
+ 3 files changed, 308 insertions(+)
+ create mode 100644 backup_git.log
+ create mode 100644 github_backup.py
+
+2025-06-03 12:54:30,480 - INFO - Realizando push a GitHub (git push)...
+2025-06-03 12:54:30,488 - INFO - Ejecutando: git push
+2025-06-03 12:54:32,628 - INFO - Push finalizado. Código de retorno: 0
+Salida de error:
+To https://github.com/josdeath/frontendChat.git
+   4018194..f6efb78  master -> master
+
+2025-06-03 12:54:32,629 - INFO - Intento de Backup número 1 completado y subido exitosamente en 2.65 segundos.
+2025-06-03 12:54:32,636 - INFO - Intento 1 finalizado en 2.66s con estado: SUCCESS
+2025-06-03 12:54:32,647 - INFO - Backup completado exitosamente después de 1 intento(s).
+2025-06-03 12:54:32,665 - INFO - Duración total del proceso: 2.67 segundos.
