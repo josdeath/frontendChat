@@ -5,9 +5,16 @@ import logging  # Para registrar eventos y mensajes de la aplicación
 import subprocess  # Para ejecutar comandos externos del sistema (como Git)
 import os  # Para interactuar con el sistema operativo (ej. verificar rutas)
 import datetime  # Para trabajar con fechas y horas (ej. para mensajes de commit)
+import time  # Para manejar tiempos de espera y pausas en la ejecución
+import threading  # Para manejar la concurrencia y ejecutar tareas en segundo plano
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError  # Para manejar timeout por intentos
+
 
 # --- Configuración Global ---
 ARCHIVO_LOG = "backup_git.log"  # Nombre del archivo donde se guardarán los logs
+MAX_REINTENTOS = 3  # Número máximo de reintentos para el proceso de backup completo
+TIMEOUT_POR_INTENTO_SEGUNDOS = 5 * 60  # 5 minutos de timeout para cada intento de backup
+RETRASO_ENTRE_REINTENTOS_SEGUNDOS = 10 # Tiempo de espera entre reintentos
 
 # --- Configuración del Logging ---
 def configurar_logging():
@@ -34,265 +41,342 @@ class AppBackup:
         Constructor de la aplicación. Se llama cuando se crea una instancia de AppBackup.
         Inicializa la ventana principal y sus componentes.
         """
-        self.raiz = ventana_raiz  # Guardar una referencia a la ventana principal de Tkinter
-        self.raiz.title("Herramienta de Backup a Git")  # Establecer el título de la ventana
-        self.raiz.geometry("600x450")  # Establecer las dimensiones iniciales de la ventana (ancho x alto)
+        self.raiz = ventana_raiz
+        self.raiz.title("Herramienta de Backup a Git con Reintentos") # Título actualizado
+        self.raiz.geometry("700x500") # Un poco más grande para los logs y mensajes
+
+        # Executor para manejar la lógica de backup con timeout en un hilo.
+        # max_workers=1 asegura que solo un intento de backup se ejecute a la vez.
+        self.executor = ThreadPoolExecutor(max_workers=1)
 
         # --- Verificación inicial: ¿Estamos en un repositorio Git? ---
         if not os.path.exists(".git"):
-            # Si no se encuentra el directorio .git, no estamos en la raíz de un repo Git.
-            self.raiz.withdraw()  # Ocultar la ventana principal para que no se vea brevemente
+            self.raiz.withdraw()
             messagebox.showerror("Error de Repositorio",
                                  "Este script debe ejecutarse desde la raíz de un repositorio Git.")
             logging.error("La aplicación no se inició desde la raíz de un repositorio Git.")
-            self.raiz.destroy()  # Cerrar la ventana de Tkinter completamente
-            return  # Salir del constructor para evitar que la app continúe
+            # Si hay un error aquí, el executor no se cerrará con al_cerrar_ventana,
+            # así que es importante manejar su cierre en el bloque __main__ si la app no arranca.
+            if hasattr(self, 'executor') and self.executor and not self.executor._shutdown:
+                self.executor.shutdown(wait=False, cancel_futures=True)
+            self.raiz.destroy()
+            return
 
         # --- Creación de los Widgets (componentes de la GUI) ---
-        self.etiqueta_bienvenida = tk.Label(self.raiz, text="Bienvenido a la Herramienta de Backup")
-        self.etiqueta_bienvenida.pack(pady=10)  # Añadir la etiqueta a la ventana con un padding vertical
+        self.etiqueta_bienvenida = tk.Label(self.raiz, text="Bienvenido a la Herramienta de Backup con Reintentos")
+        self.etiqueta_bienvenida.pack(pady=10)
 
         self.boton_backup = tk.Button(
             self.raiz,
             text="Iniciar Backup a GitHub",
-            command=self.iniciar_proceso_backup,  # Función que se llamará al hacer clic
-            font=("Arial", 12, "bold"), # Estilo de fuente
-            bg="lightblue", # Color de fondo
-            pady=10 # Padding interno vertical
+            # El comando del botón ahora llama a la función que maneja hilos y reintentos
+            command=self.iniciar_proceso_backup_con_reintentos_en_hilo,
+            font=("Arial", 12, "bold"),
+            bg="lightblue",
+            pady=10
         )
-        self.boton_backup.pack(pady=10, fill=tk.X) # fill=tk.X hace que el botón se expanda horizontalmente
+        self.boton_backup.pack(pady=10, fill=tk.X)
 
         self.etiqueta_logs = tk.Label(self.raiz, text="Logs de Operación:")
-        self.etiqueta_logs.pack(pady=(5, 0), anchor='w', padx=10) # anchor='w' alinea a la izquierda
+        self.etiqueta_logs.pack(pady=(5, 0), anchor='w', padx=10)
 
         self.texto_logs = scrolledtext.ScrolledText(
             self.raiz,
-            height=15,  # Altura en líneas de texto
-            wrap=tk.WORD,  # Ajustar texto a nivel de palabra
-            state=tk.DISABLED  # Empezar deshabilitado para que el usuario no escriba directamente
+            height=18, # Un poco más de altura para los logs
+            wrap=tk.WORD,
+            state=tk.DISABLED
         )
-        self.texto_logs.pack(pady=5, padx=10, fill=tk.BOTH, expand=True) # fill y expand hacen que se ajuste al tamaño de la ventana
+        self.texto_logs.pack(pady=5, padx=10, fill=tk.BOTH, expand=True)
 
-        # Mensaje inicial en los logs al arrancar la aplicación (si pasó la verificación de .git)
         self.loguear_mensaje("Aplicación de backup iniciada en un repositorio Git.")
+
+        # Manejar el cierre de la ventana (ej. clic en la 'X') para limpiar el executor
+        self.raiz.protocol("WM_DELETE_WINDOW", self.al_cerrar_ventana)
+
+    def al_cerrar_ventana(self):
+        """
+        Se llama cuando el usuario intenta cerrar la ventana.
+        Se asegura de que el ThreadPoolExecutor se cierre limpiamente.
+        """
+        self.loguear_mensaje("Cerrando aplicación...", "INFO")
+        if hasattr(self, 'executor') and self.executor and not self.executor._shutdown:
+            # `cancel_futures=True` es para Python 3.9+ e intenta cancelar tareas pendientes.
+            # `wait=True` (o False) depende de si quieres esperar a que las tareas terminen o no.
+            # Para un cierre rápido, `wait=False` podría ser mejor, pero `wait=True` es más seguro
+            # si las tareas realizan operaciones críticas que no deben interrumpirse bruscamente.
+            # Dado que los comandos Git pueden ser largos, `wait=False` con `cancel_futures=True` es un buen compromiso.
+            self.loguear_mensaje("Intentando cerrar el ThreadPoolExecutor...", "INFO")
+            self.executor.shutdown(wait=False, cancel_futures=True)
+            self.loguear_mensaje("ThreadPoolExecutor cerrado.", "INFO")
+        self.raiz.destroy()
 
     def ejecutar_comando_git(self, comando_args, nombre_operacion="Comando Git"):
         """
-        Ejecuta un comando Git especificado usando subprocess.
-        Captura y loguea la salida estándar (stdout), la salida de error (stderr) y el código de retorno.
-
-        Args:
-            comando_args (list): Una lista de strings representando el comando y sus argumentos.
-                                 Ej: ["git", "status", "--porcelain"]
-            nombre_operacion (str): Un nombre descriptivo para la operación (usado en logs).
-
-        Returns:
-            tuple: (stdout_str, stderr_str, codigo_retorno_int)
-                   Retorna -1, -2, o -3 para errores específicos de esta función.
+        Ejecuta un comando Git. Esta función es llamada desde un hilo de trabajo,
+        por lo que sus logs se enrutan a través de `loguear_mensaje` para actualizar la GUI de forma segura.
+        Los `messagebox` directos han sido eliminados de aquí; el llamador debe manejarlos.
         """
+        # (El cuerpo de esta función parece estar correcto y ya fue comentado en la versión anterior)
+        # Solo me aseguro de que los comentarios sobre los messagebox eliminados sean claros.
         try:
             self.loguear_mensaje(f"Ejecutando: {' '.join(comando_args)}", nivel="INFO")
-            # Iniciar el proceso del comando Git
             proceso = subprocess.Popen(
                 comando_args,
-                stdout=subprocess.PIPE,  # Capturar la salida estándar
-                stderr=subprocess.PIPE,  # Capturar la salida de error
-                text=True,  # Decodificar stdout/stderr como texto (UTF-8 por defecto)
-                cwd=os.getcwd()  # Asegurar que el comando se ejecute en el directorio actual
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, cwd=os.getcwd()
             )
-            # Esperar a que el comando termine y obtener sus salidas.
-            # Timeout para evitar que la aplicación se congele indefinidamente.
-            stdout, stderr = proceso.communicate(timeout=120)  # 120 segundos = 2 minutos
-            codigo_retorno = proceso.returncode  # Código de salida del comando (0 usualmente es éxito)
+            stdout, stderr = proceso.communicate(timeout=120)
+            codigo_retorno = proceso.returncode
 
-            # Preparar mensaje de log detallado
             mensaje_log_completo = f"{nombre_operacion} finalizado. Código: {codigo_retorno}\n"
-            if stdout:
-                mensaje_log_completo += f"Salida Estándar:\n{stdout.strip()}\n"
-            if stderr:
-                mensaje_log_completo += f"Salida de Error:\n{stderr.strip()}\n"
+            if stdout: mensaje_log_completo += f"Salida Estándar:\n{stdout.strip()}\n"
+            if stderr: mensaje_log_completo += f"Salida de Error:\n{stderr.strip()}\n"
 
-            # Loguear basado en el código de retorno
             if codigo_retorno == 0:
                 self.loguear_mensaje(mensaje_log_completo, nivel="INFO")
             else:
-                # Caso especial: "nothing to commit" de 'git commit' devuelve 1 pero no es un error crítico para nosotros.
                 if nombre_operacion == "Commit" and "nothing to commit" in stderr.lower():
                     self.loguear_mensaje(mensaje_log_completo + "INFO: No había cambios para commitear.", "WARNING")
-                    return stdout, stderr, 0  # Tratar como éxito para el flujo de la app, sobreescribiendo el código.
+                    return stdout, stderr, 0
                 else:
-                    # Es un error real del comando Git
                     self.loguear_mensaje(mensaje_log_completo, nivel="ERROR")
             return stdout, stderr, codigo_retorno
-
         except FileNotFoundError:
-            # El ejecutable 'git' no se encontró en el PATH del sistema.
             msg_error = "Error: El comando 'git' no se encontró. ¿Está Git instalado y en el PATH?"
             self.loguear_mensaje(msg_error, "ERROR")
-            messagebox.showerror("Error de Git", msg_error)
-            return "", "Git no encontrado", -1  # Código de error personalizado
+            # No mostrar messagebox desde aquí (hilo de trabajo)
+            return "", "Git no encontrado", -1
         except subprocess.TimeoutExpired:
-            # El comando Git tardó demasiado en ejecutarse.
             msg_error = f"La operación '{nombre_operacion}' excedió el tiempo de espera (120s) y fue cancelada."
             self.loguear_mensaje(msg_error, "ERROR")
-            messagebox.showerror("Timeout", msg_error)
+            # No mostrar messagebox desde aquí
             return "", "Comando Git excedió el tiempo de espera", -2
         except Exception as e:
-            # Cualquier otro error inesperado durante la ejecución del subproceso.
             msg_error = f"Error inesperado ejecutando '{nombre_operacion}': {e}"
             self.loguear_mensaje(msg_error, "ERROR")
-            messagebox.showerror("Error Inesperado", msg_error)
+            # No mostrar messagebox desde aquí
             return "", str(e), -3
 
-    def iniciar_proceso_backup(self):
+    def _realizar_intento_backup_logica(self):
         """
-        Orquesta el proceso completo de backup:
-        1. Verifica el estado del repositorio.
-        2. Si hay cambios, ejecuta 'git add .'.
-        3. Luego ejecuta 'git commit -m "mensaje"'.
-        4. Finalmente, si el commit fue exitoso y hubo cambios, ejecuta 'git push'.
-        Maneja errores en cada paso y actualiza la GUI.
+        Contiene la lógica de un solo intento de backup.
+        Esta función está diseñada para ser ejecutada en un hilo por ThreadPoolExecutor.
+        NO debe interactuar directamente con la GUI (messagebox, config de widgets).
+        Retorna un string: "SUCCESS", "NO_CHANGES", "NO_CHANGES_AFTER_ADD", o un código de error.
         """
-        self.loguear_mensaje("--- Iniciando proceso de backup ---", "INFO")
-        self.boton_backup.config(state=tk.DISABLED)  # Deshabilitar botón para evitar clics múltiples
-        hay_errores_en_proceso = False  # Bandera para rastrear si ocurrió algún error
+        # (El cuerpo de esta función parece estar correcto y ya fue comentado en la versión anterior)
+        self.loguear_mensaje("Iniciando intento de lógica de backup...", "INFO")
 
-        # --- 1. Verificar estado del repositorio Git ---
-        self.loguear_mensaje("Verificando estado del repositorio...", "INFO")
-        stdout_status, stderr_status, rc_status = self.ejecutar_comando_git(
-            ["git", "status", "--porcelain"],  # --porcelain da salida fácil de analizar
-            "Verificar Estado Git"
+        stdout_status, _, rc_status = self.ejecutar_comando_git(
+            ["git", "status", "--porcelain"], "Verificar Estado Git"
         )
-
-        if rc_status != 0: # rc_status sería > 0 para error de git, o < 0 para error de ejecutar_comando_git
-            self.loguear_mensaje("Error al verificar el estado de Git. Abortando backup.", "ERROR")
-            # El messagebox de error ya se habrá mostrado desde ejecutar_comando_git si rc_status < 0
-            hay_errores_en_proceso = True
-        elif not stdout_status.strip():  # Si stdout está vacío, no hay cambios ni archivos no rastreados.
+        if rc_status < 0: return "GIT_EXECUTION_ERROR"
+        if rc_status > 0:
+            self.loguear_mensaje("Error al verificar el estado de Git.", "ERROR")
+            return "GIT_STATUS_ERROR"
+        if not stdout_status.strip():
             self.loguear_mensaje("No hay cambios pendientes en el repositorio.", "INFO")
-            messagebox.showinfo("Sin Cambios", "No hay cambios para respaldar.")
-            # No hay errores, pero tampoco trabajo que hacer. El proceso termina aquí.
-        else:
-            # Hay cambios o archivos no rastreados. Procedemos con el backup.
-            self.loguear_mensaje(f"Cambios detectados o archivos no rastreados:\n{stdout_status.strip()}", "INFO")
-            messagebox.showinfo("Cambios Detectados", "Se procederá con el backup de los cambios.")
+            return "NO_CHANGES"
+        self.loguear_mensaje(f"Cambios detectados o archivos no rastreados:\n{stdout_status.strip()}", "INFO")
 
-            # --- 2. Añadir todos los cambios al staging area (git add .) ---
-            # Este paso solo se ejecuta si la verificación de estado fue exitosa Y hubo cambios.
-            if not hay_errores_en_proceso:
-                self.loguear_mensaje("Añadiendo todos los cambios al staging area (git add .)...", "INFO")
-                # Usamos '_' para stdout_add ya que no lo necesitamos directamente aquí.
-                _, stderr_add, rc_add = self.ejecutar_comando_git(["git", "add", "."], "Git Add")
-                if rc_add != 0:
-                    self.loguear_mensaje("Error durante 'git add .'. Abortando backup.", "ERROR")
-                    hay_errores_en_proceso = True
+        _, _, rc_add = self.ejecutar_comando_git(["git", "add", "."], "Git Add")
+        if rc_add != 0:
+            self.loguear_mensaje("Error durante 'git add .'.", "ERROR")
+            return "GIT_ADD_ERROR"
 
-            # --- 3. Realizar Commit ---
-            # Este paso solo se ejecuta si 'git add' fue exitoso (o no necesario si no hubo errores previos).
-            if not hay_errores_en_proceso:
-                # Generar un mensaje de commit dinámico
-                current_date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                # Podrías añadir un número de backup aquí si lo gestionas.
-                commit_message = f"Backup automático - {current_date_str}"
-                self.loguear_mensaje(f"Realizando commit con mensaje: '{commit_message}'...", "INFO")
+        current_date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        commit_message = f"Backup automático - {current_date_str}"
+        self.loguear_mensaje(f"Realizando commit con mensaje: '{commit_message}'...", "INFO")
+        _, stderr_commit, rc_commit = self.ejecutar_comando_git(
+            ["git", "commit", "-m", commit_message], "Git Commit"
+        )
+        if rc_commit < 0: return "GIT_EXECUTION_ERROR"
+        if rc_commit > 0:
+            self.loguear_mensaje("Error durante 'git commit'.", "ERROR")
+            return "GIT_COMMIT_ERROR"
+        if "nothing to commit" in stderr_commit.lower() and rc_commit == 0:
+            self.loguear_mensaje("No había cambios para commitear (detectado después de 'git add').", "WARNING")
+            return "NO_CHANGES_AFTER_ADD"
+        self.loguear_mensaje("Commit realizado exitosamente.", "INFO")
 
-                _, stderr_commit, rc_commit = self.ejecutar_comando_git(
-                    ["git", "commit", "-m", commit_message], "Git Commit"
-                )
+        self.loguear_mensaje("Realizando push al repositorio remoto (git push)...", "INFO")
+        _, _, rc_push = self.ejecutar_comando_git(["git", "push"], "Git Push")
+        if rc_push != 0:
+            self.loguear_mensaje("Error durante 'git push'.", "ERROR")
+            return "GIT_PUSH_ERROR"
 
-                if rc_commit != 0:
-                    # Si rc_commit es != 0 aquí, significa que hubo un error real en 'git commit',
-                    # ya que "nothing to commit" es manejado por ejecutar_comando_git para devolver 0.
-                    self.loguear_mensaje("Error durante 'git commit'. Abortando backup.", "ERROR")
-                    hay_errores_en_proceso = True
-                elif "nothing to commit" in stderr_commit.lower() and rc_commit == 0:
-                    # Este caso es cuando `git add .` no resultó en cambios reales para el commit.
-                    self.loguear_mensaje("No había cambios para commitear (detectado después de 'git add').", "WARNING")
-                    messagebox.showwarning("Sin Cambios Reales",
-                                           "No se realizaron nuevos commits ya que no había cambios efectivos tras 'git add'.")
-                    # No se considera un error que detenga el proceso, pero no se hará push.
-                else:
-                    # Commit exitoso y hubo cambios reales.
-                    self.loguear_mensaje("Commit realizado exitosamente.", "INFO")
+        self.loguear_mensaje("Push realizado exitosamente.", "INFO")
+        return "SUCCESS"
 
-                    # --- 4. Realizar Push al repositorio remoto (git push) ---
-                    # Solo si el commit fue exitoso, hubo cambios reales, y no hubo errores previos.
-                    # La condición `not hay_errores_en_proceso` cubre los errores de status y add.
-                    # El flujo de `if/elif/else` del commit asegura que solo llegamos aquí si hubo un commit real.
-                    self.loguear_mensaje("Realizando push al repositorio remoto (git push)...", "INFO")
-                    _, stderr_push, rc_push = self.ejecutar_comando_git(["git", "push"], "Git Push")
-                    if rc_push != 0:
-                        self.loguear_mensaje("Error durante 'git push'.", "ERROR")
-                        messagebox.showerror("Error de Push",
-                                             "Falló el 'git push'. Revisa los logs y tu conexión/configuración remota.")
-                        hay_errores_en_proceso = True
-                    else:
-                        self.loguear_mensaje("Push realizado exitosamente.", "INFO")
-                        messagebox.showinfo("Éxito", "Backup completado y subido exitosamente.")
+    # ESTE MÉTODO DEBE ESTAR CORRECTAMENTE INDENTADO COMO MÉTODO DE LA CLASE
+    def _bucle_trabajador_backup(self):
+        """
+        Se ejecuta en un hilo separado (creado por iniciar_proceso_backup_con_reintentos_en_hilo).
+        Gestiona los reintentos para el proceso de backup.
+        Llama a _realizar_intento_backup_logica usando ThreadPoolExecutor para aplicar un timeout por intento.
+        Actualiza la GUI de forma segura usando self.raiz.after().
+        """
+        overall_start_time = time.time()
+        success = False # Indica si el proceso general de backup (con reintentos) fue exitoso
 
-        # --- Finalización del proceso de backup ---
-        self.boton_backup.config(state=tk.NORMAL)  # Rehabilitar el botón de backup
-        if hay_errores_en_proceso:
-            self.loguear_mensaje("--- Proceso de backup finalizado con errores. ---", "ERROR")
-        elif not stdout_status.strip() and rc_status == 0: # Si no hubo cambios desde el inicio
-            self.loguear_mensaje("--- Proceso de backup finalizado (sin cambios detectados). ---", "INFO")
-        else: # Si hubo cambios y (potencialmente) todo fue exitoso o se detuvo por "nothing to commit"
-            self.loguear_mensaje("--- Proceso de backup finalizado. ---", "INFO")
+        for attempt in range(1, MAX_REINTENTOS + 1):
+            # Loguear inicio del intento (usará self.raiz.after desde loguear_mensaje)
+            self.loguear_mensaje(f"--- Iniciando Intento de Backup {attempt}/{MAX_REINTENTOS} ---", "INFO")
+            attempt_start_time = time.time()
+            
+            # Enviar la tarea _realizar_intento_backup_logica al ThreadPoolExecutor.
+            # Esto permite que se ejecute en uno de los hilos del pool (en nuestro caso, solo 1).
+            future = self.executor.submit(self._realizar_intento_backup_logica)
+            status_intento = "UNKNOWN_ERROR" # Valor por defecto
+            try:
+                # Esperar el resultado de la tarea (future.result()) con un timeout.
+                # Si la tarea no termina dentro del timeout, se lanza FutureTimeoutError.
+                status_intento = future.result(timeout=TIMEOUT_POR_INTENTO_SEGUNDOS)
+            except FutureTimeoutError:
+                status_intento = "TIMEOUT_ATTEMPT"
+                self.loguear_mensaje(f"Intento {attempt} excedió el tiempo límite de {TIMEOUT_POR_INTENTO_SEGUNDOS / 60:.0f} minutos.", "ERROR")
+                # Intentar cancelar la tarea si sigue corriendo.
+                # future.cancel() devuelve True si la tarea fue cancelada, False si ya terminó o no pudo ser cancelada.
+                if future.running():
+                    future.cancel()
+            except Exception as e: # Captura cualquier otra excepción que pudiera ocurrir en _realizar_intento_backup_logica
+                                   # o durante la gestión del future, aunque es menos común aquí.
+                status_intento = "EXCEPTION_IN_LOGIC"
+                self.loguear_mensaje(f"Excepción no controlada durante el intento {attempt}: {str(e)}", "CRITICAL")
+                # Loguear el traceback completo al archivo de log para depuración.
+                logging.exception(f"Excepción no controlada en _bucle_trabajador_backup, intento {attempt}")
 
+            attempt_duration = time.time() - attempt_start_time
+            self.loguear_mensaje(f"Intento {attempt} finalizado en {attempt_duration:.2f}s con estado: {status_intento}", "INFO")
 
-    # def accion_backup_marcador_posicion(self): # Método antiguo, se puede eliminar si no se usa
-    #     self.loguear_mensaje("Botón de backup presionado (función por implementar)")
+            if status_intento == "SUCCESS":
+                overall_duration = time.time() - overall_start_time
+                self.loguear_mensaje(f"Backup completado exitosamente después de {attempt} intento(s).", "INFO")
+                self.loguear_mensaje(f"Duración total del proceso: {overall_duration:.2f} segundos.", "INFO")
+                # Mostrar messagebox en el hilo principal
+                self.raiz.after(0, lambda: messagebox.showinfo("Éxito", f"Backup realizado con éxito en el intento {attempt}."))
+                success = True # El proceso general fue exitoso
+                break # Salir del bucle de reintentos
+
+            elif status_intento in ["NO_CHANGES", "NO_CHANGES_AFTER_ADD"]:
+                overall_duration = time.time() - overall_start_time
+                self.loguear_mensaje("No hay cambios para el backup.", "INFO")
+                self.loguear_mensaje(f"Duración total del proceso (sin cambios): {overall_duration:.2f} segundos.", "INFO")
+                self.raiz.after(0, lambda: messagebox.showinfo("Sin Cambios", "No se detectaron cambios para el backup."))
+                success = True # Se considera un "éxito" funcional ya que no había nada que hacer
+                break # Salir del bucle de reintentos
+            
+            else: # El intento falló (GIT_ERROR, TIMEOUT_ATTEMPT, EXCEPTION_IN_LOGIC, etc.)
+                self.loguear_mensaje(f"Intento {attempt} falló. Estado: {status_intento}", "ERROR")
+                if attempt < MAX_REINTENTOS:
+                    self.loguear_mensaje(f"Esperando {RETRASO_ENTRE_REINTENTOS_SEGUNDOS}s antes del próximo intento...", "INFO")
+                    time.sleep(RETRASO_ENTRE_REINTENTOS_SEGUNDOS) # Pausa en el hilo trabajador
+                # Si es el último intento, el mensaje de fallo total se mostrará después del bucle.
+
+        # --- Después de todos los intentos ---
+        if not success: # Si ningún intento fue exitoso (SUCCESS o NO_CHANGES*)
+            overall_duration = time.time() - overall_start_time
+            self.loguear_mensaje(f"Todos los {MAX_REINTENTOS} intentos de backup fallaron.", "ERROR")
+            self.loguear_mensaje(f"Duración total del proceso (fallido): {overall_duration:.2f} segundos.", "ERROR")
+            self.raiz.after(0, lambda: messagebox.showerror("Fallo Total", f"No se pudo completar el backup después de {MAX_REINTENTOS} intentos."))
+        
+        # Siempre rehabilitar el botón de backup al final del proceso completo.
+        # Se usa self.raiz.after para asegurar que se ejecuta en el hilo principal de Tkinter.
+        self.raiz.after(0, lambda: self.boton_backup.config(state=tk.NORMAL))
+
+    # ESTE MÉTODO DEBE ESTAR CORRECTAMENTE INDENTADO COMO MÉTODO DE LA CLASE
+    def iniciar_proceso_backup_con_reintentos_en_hilo(self):
+        """
+        Función llamada cuando el usuario presiona el botón de backup.
+        Deshabilita el botón e inicia el `_bucle_trabajador_backup` en un nuevo hilo
+        para no bloquear la interfaz gráfica.
+        """
+        self.boton_backup.config(state=tk.DISABLED) # Deshabilitar inmediatamente
+        # Limpiar logs anteriores de la GUI para mejor legibilidad en cada ejecución
+        self.texto_logs.config(state=tk.NORMAL)
+        self.texto_logs.delete('1.0', tk.END)
+        self.texto_logs.config(state=tk.DISABLED)
+
+        self.loguear_mensaje("Iniciando proceso de backup con reintentos...", "INFO")
+
+        # Crear un nuevo hilo que ejecutará el bucle de trabajo.
+        # `daemon=True` permite que el programa principal termine incluso si este hilo sigue corriendo
+        # (aunque con `executor.shutdown(wait=True)` en el cierre, intentamos que terminen).
+        worker_thread = threading.Thread(target=self._bucle_trabajador_backup, daemon=True)
+        worker_thread.start() # Iniciar la ejecución del hilo
 
     def agregar_log_gui(self, mensaje_gui_formateado):
         """
         Añade un mensaje al widget ScrolledText de la GUI.
-        Esta función debe ser llamada de forma segura si se usa desde hilos (no es el caso aquí aún).
+        Esta función SIEMPRE debe ser llamada desde el hilo principal de Tkinter.
+        `loguear_mensaje` se encarga de esto usando `self.raiz.after` si es necesario.
         """
-        self.texto_logs.config(state=tk.NORMAL)  # Habilitar edición
-        self.texto_logs.insert(tk.END, mensaje_gui_formateado)  # Insertar mensaje al final
-        self.texto_logs.see(tk.END)  # Auto-scroll para ver el último mensaje
-        self.texto_logs.config(state=tk.DISABLED)  # Deshabilitar edición nuevamente
+        if not self.raiz.winfo_exists(): # Prevenir error si la ventana ya se cerró
+            return
+        self.texto_logs.config(state=tk.NORMAL)
+        self.texto_logs.insert(tk.END, mensaje_gui_formateado)
+        self.texto_logs.see(tk.END)
+        self.texto_logs.config(state=tk.DISABLED)
+        # self.raiz.update_idletasks() # Generalmente no es necesario con root.after
 
     def loguear_mensaje(self, mensaje_original, nivel="INFO"):
         """
         Función centralizada para loguear mensajes:
-        1. Los escribe en el archivo de log (usando el módulo logging).
-        2. Los muestra en el área de texto de la GUI.
+        1. Escribe al archivo de log (usando el módulo `logging`).
+        2. Muestra en el área de texto de la GUI (de forma segura para hilos).
         """
         # Formatear mensaje para la GUI, incluyendo el nivel
         mensaje_para_gui = f"[{nivel.upper()}] {mensaje_original}\n"
 
-        # Escribir al archivo de log usando el sistema de logging de Python
+        # Escribir al archivo de log
         if nivel.upper() == "ERROR":
             logging.error(mensaje_original)
         elif nivel.upper() == "WARNING":
             logging.warning(mensaje_original)
-        else:  # Por defecto, o si es "INFO"
+        elif nivel.upper() == "CRITICAL": # Añadido para EXCEPTION_IN_LOGIC
+            logging.critical(mensaje_original)
+        else:  # INFO o cualquier otro
             logging.info(mensaje_original)
-
-        # Mostrar en la GUI
-        # En una app más compleja con hilos, esta llamada a la GUI debería hacerse
-        # de forma segura (ej. con root.after() si se llama desde otro hilo).
-        # Aquí, como todo es secuencial en el hilo principal, es seguro.
-        self.agregar_log_gui(mensaje_para_gui)
+        
+        # Actualizar la GUI de forma segura para hilos
+        if threading.current_thread() is threading.main_thread():
+            # Si ya estamos en el hilo principal, actualizamos directamente
+            if self.raiz.winfo_exists(): # Solo si la ventana aún existe
+                 self.agregar_log_gui(mensaje_para_gui)
+        else:
+            # Si estamos en otro hilo, programamos la actualización en el hilo principal
+            # after(0, ...) lo pone en la cola de eventos de Tkinter para ejecutarlo tan pronto como sea posible.
+            if self.raiz.winfo_exists(): # Solo si la ventana aún existe
+                self.raiz.after(0, self.agregar_log_gui, mensaje_para_gui)
 
 # --- Código principal para ejecutar la aplicación ---
 if __name__ == "__main__":
-    configurar_logging()  # Configurar el logging antes de que nada más suceda
+    configurar_logging()  # Configurar el logging al inicio
 
-    ventana_principal_tk = tk.Tk()  # Crear la ventana raíz de Tkinter
-    app_gui = AppBackup(ventana_principal_tk)  # Crear una instancia de nuestra aplicación
+    ventana_principal_tk = tk.Tk()  # Crear la ventana raíz
+    app_gui = AppBackup(ventana_principal_tk)  # Crear la instancia de la aplicación
 
-    # Verificar si la ventana todavía existe. Podría haber sido destruida en AppBackup.__init__
-    # si no se estaba en un repositorio Git.
+    # Verificar si la ventana todavía existe.
+    # Podría haber sido destruida en AppBackup.__init__ si no es un repo Git.
     if ventana_principal_tk.winfo_exists():
-        ventana_principal_tk.mainloop()  # Iniciar el bucle de eventos de Tkinter
-        # Esta línea se ejecuta cuando la ventana principal se cierra limpiamente
-        logging.info("Aplicación de backup cerrada por el usuario.")
+        try:
+            ventana_principal_tk.mainloop()  # Iniciar el bucle de eventos de Tkinter
+            logging.info("Aplicación de backup cerrada por el usuario (mainloop terminado).")
+        except KeyboardInterrupt:
+            logging.info("Aplicación interrumpida por el usuario (Ctrl+C).")
+            if hasattr(app_gui, 'al_cerrar_ventana'): # Intentar cierre limpio
+                app_gui.al_cerrar_ventana()
+        except Exception as e:
+            logging.exception(f"Error inesperado en el mainloop de Tkinter: {e}")
+            if hasattr(app_gui, 'al_cerrar_ventana'): # Intentar cierre limpio
+                app_gui.al_cerrar_ventana()
     else:
-        # Esto se logueará si, por ejemplo, __init__ llamó a destroy()
-        logging.warning("La aplicación no se inició completamente (ej. no es un repo Git o hubo un error temprano).")
+        logging.warning("La aplicación no se inició completamente (ventana no existe al llegar al mainloop).")
+    
+    # Intento final de cerrar el executor si __init__ falló antes de asignar al_cerrar_ventana
+    # o si el mainloop terminó abruptamente sin llamar a al_cerrar_ventana.
+    if hasattr(app_gui, 'executor') and app_gui.executor and not app_gui.executor._shutdown:
+        logging.info("Asegurando cierre del ThreadPoolExecutor al finalizar el script.")
+        app_gui.executor.shutdown(wait=False, cancel_futures=True)
 
-    # Este log es un poco redundante si el de arriba se ejecuta, pero sirve como fallback
-    # o si el cierre no fue por el mainloop terminando normalmente.
-    # logging.info("Script de aplicación de backup finalizado.") # Podríamos omitir este
+    logging.info("Script de aplicación de backup finalizado.")
