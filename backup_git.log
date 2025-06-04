@@ -473,3 +473,43 @@ Salida estándar:
 
 2025-06-03 13:31:03,828 - INFO - Realizando push a GitHub (git push)...
 2025-06-03 13:31:03,833 - INFO - Ejecutando: git push
+2025-06-03 13:31:04,430 - ERROR - Intento 3 excedió el tiempo límite de 0 minutos.
+2025-06-03 13:31:04,431 - INFO - Intento 3 finalizado en 1.01s con estado: TIMEOUT_ATTEMPT
+2025-06-03 13:31:04,436 - ERROR - Intento 3 falló. Estado: TIMEOUT_ATTEMPT
+2025-06-03 13:31:04,441 - INFO - Esperando 10 segundos antes del próximo intento...
+2025-06-03 13:31:06,002 - INFO - Push finalizado. Código de retorno: 0
+Salida de error:
+To https://github.com/josdeath/frontendChat.git
+   7dd0b2c..6bf01f9  master -> master
+
+2025-06-03 13:31:06,005 - INFO - Intento de Backup número 6 completado y subido exitosamente en 2.58 segundos.
+2025-06-03 13:31:14,453 - INFO - --- Intento de Backup 4/20 ---
+2025-06-03 13:31:14,455 - INFO - Iniciando intento de backup...
+2025-06-03 13:31:14,474 - INFO - Verificando conexión a GitHub...
+2025-06-03 13:31:14,552 - INFO - Conexión a GitHub establecida correctamente.
+2025-06-03 13:31:14,553 - INFO - Añadiendo cambios al staging area (git add .)...
+2025-06-03 13:31:14,559 - INFO - Ejecutando: git add .
+2025-06-03 13:31:14,648 - INFO - Add finalizado. Código de retorno: 0
+
+2025-06-03 13:31:14,649 - INFO - Ejecutando: git status --porcelain
+2025-06-03 13:31:14,726 - INFO - Status Check finalizado. Código de retorno: 0
+Salida estándar:
+M  .backup_info.txt
+MM backup_git.log
+
+2025-06-03 13:31:14,727 - INFO - Realizando commit con mensaje: 'backup 7 - 2025-06-03 13:31:14'...
+2025-06-03 13:31:14,735 - INFO - Ejecutando: git commit -m backup 7 - 2025-06-03 13:31:14
+2025-06-03 13:31:14,874 - INFO - Commit finalizado. Código de retorno: 0
+Salida estándar:
+[master baa5328] backup 7 - 2025-06-03 13:31:14
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
+2025-06-03 13:31:14,909 - INFO - Cerrando aplicación de backup...
+2025-06-03 13:31:14,951 - INFO - Aplicación de backup cerrada limpiamente.
+2025-06-03 13:31:15,474 - ERROR - Intento 4 excedió el tiempo límite de 0 minutos.
+2025-06-04 10:07:16,441 - INFO - Aplicación de backup iniciada.
+2025-06-04 10:14:21,208 - INFO - Cerrando aplicación de backup...
+2025-06-04 10:14:21,463 - INFO - Aplicación de backup cerrada limpiamente.
+2025-06-04 10:14:36,505 - INFO - Aplicación de backup iniciada.
+2025-06-04 10:14:45,051 - INFO - Cerrando aplicación de backup...
+2025-06-04 10:14:45,113 - INFO - Aplicación de backup cerrada limpiamente.
