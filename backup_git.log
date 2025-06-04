@@ -513,3 +513,50 @@ Salida estándar:
 2025-06-04 10:14:36,505 - INFO - Aplicación de backup iniciada.
 2025-06-04 10:14:45,051 - INFO - Cerrando aplicación de backup...
 2025-06-04 10:14:45,113 - INFO - Aplicación de backup cerrada limpiamente.
+2025-06-04 10:18:56,581 - INFO - Aplicación de backup iniciada.
+2025-06-04 10:18:58,425 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-04 10:18:58,427 - INFO - --- Intento de Backup 1/5 ---
+2025-06-04 10:18:58,433 - INFO - Iniciando intento de backup...
+2025-06-04 10:18:58,436 - INFO - Verificando conexión a GitHub...
+2025-06-04 10:18:58,976 - INFO - Conexión a GitHub establecida correctamente.
+2025-06-04 10:18:58,978 - INFO - Añadiendo cambios al staging area (git add .)...
+2025-06-04 10:18:58,980 - INFO - Ejecutando: git add .
+2025-06-04 10:18:59,110 - INFO - Add finalizado. Código de retorno: 0
+
+2025-06-04 10:18:59,111 - INFO - Ejecutando: git status --porcelain
+2025-06-04 10:18:59,180 - INFO - Status Check finalizado. Código de retorno: 0
+Salida estándar:
+MM backup_git.log
+M  github_backup.py
+
+2025-06-04 10:18:59,181 - INFO - Realizando commit con mensaje: 'backup 7 - 2025-06-04 10:18:58'...
+2025-06-04 10:18:59,182 - INFO - Ejecutando: git commit -m backup 7 - 2025-06-04 10:18:58
+2025-06-04 10:18:59,329 - INFO - Commit finalizado. Código de retorno: 0
+Salida estándar:
+[master d0e1be4] backup 7 - 2025-06-04 10:18:58
+ 2 files changed, 42 insertions(+), 2 deletions(-)
+
+2025-06-04 10:18:59,330 - INFO - Realizando push a GitHub (git push)...
+2025-06-04 10:18:59,335 - INFO - Ejecutando: git push
+2025-06-04 10:19:01,502 - INFO - Push finalizado. Código de retorno: 0
+Salida de error:
+To https://github.com/josdeath/frontendChat.git
+   6bf01f9..d0e1be4  master -> master
+
+2025-06-04 10:19:01,504 - INFO - Intento de Backup número 7 completado y subido exitosamente en 3.07 segundos.
+2025-06-04 10:19:01,510 - INFO - Intento 1 finalizado en 3.08s con estado: SUCCESS
+2025-06-04 10:19:01,523 - INFO - Backup completado exitosamente después de 1 intento(s).
+2025-06-04 10:19:01,539 - INFO - Duración total del proceso: 3.10 segundos.
+2025-06-04 13:06:52,542 - INFO - Aplicación de backup iniciada.
+2025-06-04 13:06:55,146 - INFO - --- Iniciando proceso de backup ---
+2025-06-04 13:06:55,146 - INFO - Ejecutando: git status --porcelain
+2025-06-04 13:06:55,223 - INFO - Verificar Estado Git finalizado. Codigo: 0
+Salida Estandar:
+M .backup_info.txt
+ M backup_git.log
+?? intro.py
+
+2025-06-04 13:06:55,223 - INFO - Cambios Detectados
+2025-06-04 13:06:55,224 - INFO - --- Proceso de backup finalizado ---
+2025-06-04 13:08:15,273 - INFO - Aplicación de backup cerrada correctamente.
+2025-06-04 13:08:15,274 - INFO - Aplicación de backup cerrada.
