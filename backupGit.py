@@ -462,4 +462,3 @@ if __name__ == "__main__":
         app_gui.executor.shutdown(wait=False, cancel_futures=True)
 
     logging.info("Script de aplicación de backup finalizado.")
-    #######
