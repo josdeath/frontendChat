@@ -46,3 +46,156 @@ To https://github.com/josdeath/frontendChat.git
 2025-06-05 09:24:33,183 - INFO - Intentando cerrar el ThreadPoolExecutor...
 2025-06-05 09:24:33,187 - INFO - ThreadPoolExecutor cerrado.
 2025-06-05 09:24:33,205 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 09:28:25,328 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:28:27,734 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 09:28:27,736 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 09:28:27,740 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:28:27,744 - INFO - Último número de backup leído: 1. Siguiente número: 2
+2025-06-05 09:28:27,745 - INFO - Ejecutando: git status --porcelain
+2025-06-05 09:28:27,815 - INFO - Verificar Estado Git finalizado. Código: 0
+Salida Estándar:
+M backup_git.log
+ M intro.py
+?? backup_info.txt
+
+2025-06-05 09:28:27,815 - INFO - Cambios detectados o archivos no rastreados:
+M backup_git.log
+ M intro.py
+?? backup_info.txt
+2025-06-05 09:28:27,818 - INFO - Ejecutando: git add .
+2025-06-05 09:28:27,900 - INFO - Git Add finalizado. Código: 0
+
+2025-06-05 09:28:27,901 - INFO - Realizando commit con mensaje: 'Backup #2 - 2025-06-05 09:28:27'...
+2025-06-05 09:28:27,905 - INFO - Ejecutando: git commit -m Backup #2 - 2025-06-05 09:28:27
+2025-06-05 09:28:28,115 - INFO - Git Commit finalizado. Código: 0
+Salida Estándar:
+[master e4e992a] Backup #2 - 2025-06-05 09:28:27
+ 3 files changed, 45 insertions(+), 1 deletion(-)
+ create mode 100644 backup_info.txt
+
+2025-06-05 09:28:28,115 - INFO - Commit realizado exitosamente.
+2025-06-05 09:28:28,121 - INFO - Realizando push al repositorio remoto (git push)...
+2025-06-05 09:28:28,129 - INFO - Ejecutando: git push
+2025-06-05 09:28:30,181 - INFO - Git Push finalizado. Código: 0
+Salida de Error:
+To https://github.com/josdeath/frontendChat.git
+   c384f3c..e4e992a  master -> master
+
+2025-06-05 09:28:30,182 - INFO - Push realizado exitosamente.
+2025-06-05 09:28:30,191 - INFO - Número de backup 2 guardado en 'backup_info.txt'.
+2025-06-05 09:28:30,201 - INFO - Intento 1 finalizado en 2.46s con estado: SUCCESS
+2025-06-05 09:28:30,208 - INFO - Backup completado exitosamente después de 1 intento(s).
+2025-06-05 09:28:30,221 - INFO - Duración total del proceso: 2.47 segundos.
+2025-06-05 09:28:34,386 - INFO - Cerrando aplicación...
+2025-06-05 09:28:34,389 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 09:28:34,392 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 09:28:34,425 - INFO - Aplicación de backup cerrada por el usuario (mainloop terminado).
+2025-06-05 09:28:34,425 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 09:35:57,421 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:36:55,820 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 09:36:55,821 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 09:36:55,823 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:36:55,826 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 09:36:55,827 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 09:36:55,844 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 09:36:55,845 - INFO - Intento 1 finalizado en 0.02s con estado: CONNECTION_ERROR
+2025-06-05 09:36:55,848 - ERROR - Intento 1 falló. Estado: CONNECTION_ERROR
+2025-06-05 09:36:55,853 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 09:37:05,857 - INFO - --- Iniciando Intento de Backup 2/3 ---
+2025-06-05 09:37:05,859 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:37:05,867 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 09:37:05,877 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 09:37:05,887 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 09:37:05,897 - INFO - Intento 2 finalizado en 0.04s con estado: CONNECTION_ERROR
+2025-06-05 09:37:05,902 - ERROR - Intento 2 falló. Estado: CONNECTION_ERROR
+2025-06-05 09:37:05,907 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 09:37:15,914 - INFO - --- Iniciando Intento de Backup 3/3 ---
+2025-06-05 09:37:15,916 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:37:15,927 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 09:37:15,933 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 09:37:15,939 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 09:37:15,946 - INFO - Intento 3 finalizado en 0.03s con estado: CONNECTION_ERROR
+2025-06-05 09:37:15,954 - ERROR - Intento 3 falló. Estado: CONNECTION_ERROR
+2025-06-05 09:37:15,970 - ERROR - Todos los 3 intentos de backup fallaron.
+2025-06-05 09:37:15,981 - ERROR - Duración total del proceso (fallido): 20.15 segundos.
+2025-06-05 09:48:01,852 - INFO - Cerrando aplicación...
+2025-06-05 09:48:01,860 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 09:48:01,862 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 09:48:01,915 - INFO - Aplicación de backup cerrada por el usuario (mainloop terminado).
+2025-06-05 09:48:01,916 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 09:48:04,557 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:48:07,053 - INFO - Cerrando aplicación...
+2025-06-05 09:48:07,054 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 09:48:07,055 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 09:48:07,099 - INFO - Aplicación de backup cerrada por el usuario (mainloop terminado).
+2025-06-05 09:48:07,099 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 09:48:15,264 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:48:36,756 - INFO - Aplicación interrumpida por el usuario (Ctrl+C).
+2025-06-05 09:48:36,757 - INFO - Cerrando aplicación...
+2025-06-05 09:48:36,759 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 09:48:36,761 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 09:48:36,831 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 11:42:18,221 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 11:42:22,054 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 11:42:22,056 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 11:42:22,059 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:42:22,063 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:42:22,065 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:42:22,138 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:42:22,139 - INFO - Intento 1 finalizado en 0.08s con estado: CONNECTION_ERROR
+2025-06-05 11:42:22,142 - ERROR - Intento 1 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:42:22,144 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 11:42:32,151 - INFO - --- Iniciando Intento de Backup 2/3 ---
+2025-06-05 11:42:32,153 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:42:32,161 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:42:32,172 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:42:32,182 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:42:32,189 - INFO - Intento 2 finalizado en 0.04s con estado: CONNECTION_ERROR
+2025-06-05 11:42:32,205 - ERROR - Intento 2 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:42:32,211 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 11:42:42,220 - INFO - --- Iniciando Intento de Backup 3/3 ---
+2025-06-05 11:42:42,221 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:42:42,227 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:42:42,233 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:42:42,244 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:42:42,257 - INFO - Intento 3 finalizado en 0.04s con estado: CONNECTION_ERROR
+2025-06-05 11:42:42,271 - ERROR - Intento 3 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:42:42,282 - ERROR - Todos los 3 intentos de backup fallaron.
+2025-06-05 11:42:42,295 - ERROR - Duración total del proceso (fallido): 20.23 segundos.
+2025-06-05 11:43:01,593 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 11:43:01,594 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 11:43:01,595 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:43:01,598 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:43:01,603 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:43:01,605 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:43:01,606 - INFO - Intento 1 finalizado en 0.01s con estado: CONNECTION_ERROR
+2025-06-05 11:43:01,610 - ERROR - Intento 1 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:43:01,616 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 11:43:11,621 - INFO - --- Iniciando Intento de Backup 2/3 ---
+2025-06-05 11:43:11,623 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:43:11,627 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:43:11,635 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:43:11,640 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:43:11,645 - INFO - Intento 2 finalizado en 0.02s con estado: CONNECTION_ERROR
+2025-06-05 11:43:11,647 - ERROR - Intento 2 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:43:11,653 - INFO - Esperando 10s antes del próximo intento...
+2025-06-05 11:43:21,659 - INFO - --- Iniciando Intento de Backup 3/3 ---
+2025-06-05 11:43:21,660 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 11:43:21,679 - INFO - Último número de backup leído: 2. Siguiente número: 3
+2025-06-05 11:43:21,687 - INFO - Verificando conexión a GitHub (github.com:443)...
+2025-06-05 11:43:21,690 - ERROR - No se pudo conectar a GitHub: [Errno 11001] getaddrinfo failed
+2025-06-05 11:43:21,692 - INFO - Intento 3 finalizado en 0.03s con estado: CONNECTION_ERROR
+2025-06-05 11:43:21,698 - ERROR - Intento 3 falló. Estado: CONNECTION_ERROR
+2025-06-05 11:43:21,704 - ERROR - Todos los 3 intentos de backup fallaron.
+2025-06-05 11:43:21,706 - ERROR - Duración total del proceso (fallido): 20.11 segundos.
+2025-06-05 11:43:26,034 - INFO - Cerrando aplicación...
+2025-06-05 11:43:26,039 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 11:43:26,044 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 11:43:26,089 - INFO - Aplicación de backup cerrada por el usuario (mainloop terminado).
+2025-06-05 11:43:26,090 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 11:57:16,948 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 11:57:22,451 - INFO - Cerrando aplicación...
+2025-06-05 11:57:22,452 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 11:57:22,452 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 11:57:22,492 - INFO - Aplicación de backup cerrada por el usuario (mainloop terminado).
+2025-06-05 11:57:22,492 - INFO - Script de aplicación de backup finalizado.

@@ -8,7 +8,7 @@ import datetime  # Para trabajar con fechas y horas (ej. para mensajes de commit
 import time  # Para manejar tiempos de espera y pausas en la ejecución
 import threading  # Para manejar la concurrencia y ejecutar tareas en segundo plano
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError  # Para manejar timeout por intentos
-
+import socket # Para verificar la conexión de red
 
 # --- Configuración Global ---
 ARCHIVO_LOG = "backup_git.log"  # Nombre del archivo donde se guardarán los logs
@@ -69,6 +69,36 @@ def save_backup_number(number, log_fn):
         if log_fn: log_fn(f"Error al guardar el número de backup {number}: {e}", "ERROR")
         # Considerar si se debe lanzar una excepción aquí para que el proceso de backup falle.
         # Por ahora, solo lo logueamos.
+
+def check_github_connection(log_fn=None, timeout=5):
+    """
+    Verifica la conexión a github.com en el puerto 443 (HTTPS).
+
+    Args:
+        log_fn (function, optional): Función para loguear mensajes (ej. self.loguear_mensaje).
+        timeout (int, optional): Tiempo de espera en segundos para establecer la conexión.
+
+    Returns:
+        bool: True si la conexión es exitosa, False en caso contrario.
+    """
+    try:
+        if log_fn: log_fn("Verificando conexión a GitHub (github.com:443)...", "INFO")
+        # Intentar crear una conexión TCP a github.com en el puerto 443
+        socket.create_connection(("github.com", 443), timeout=timeout)
+        if log_fn: log_fn("Conexión a GitHub establecida correctamente.", "INFO")
+        return True
+    except socket.timeout:
+        # Error específico si la conexión excede el timeout
+        if log_fn: log_fn("No se pudo conectar a GitHub: Timeout durante el intento de conexión.", "ERROR")
+        return False
+    except (socket.error, OSError) as e: # OSError puede cubrir algunos errores de red también
+        # Otros errores de socket o de red
+        if log_fn: log_fn(f"No se pudo conectar a GitHub: {e}", "ERROR")
+        return False
+
+
+
+
 # --- Clase Principal de la Aplicación ---
 class AppBackup:
     """
@@ -208,6 +238,12 @@ class AppBackup:
         # --- Obtener número de backup ---
         # Usamos self.loguear_mensaje como la función de log para get_next_backup_number
         numero_backup_actual = get_next_backup_number(self.loguear_mensaje)
+
+          # --- NUEVO: Chequeo de Conexión a GitHub ---
+        if not check_github_connection(self.loguear_mensaje):
+            # No es necesario loguear un error aquí de nuevo, check_github_connection ya lo hace.
+            return "CONNECTION_ERROR" # Nuevo estado de retorno
+        
 
         # --- 1. Verificar estado del repositorio Git ---
         stdout_status, _, rc_status = self.ejecutar_comando_git(
@@ -426,3 +462,4 @@ if __name__ == "__main__":
         app_gui.executor.shutdown(wait=False, cancel_futures=True)
 
     logging.info("Script de aplicación de backup finalizado.")
+    #######
