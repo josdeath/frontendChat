@@ -671,3 +671,39 @@ To https://github.com/josdeath/frontendChat.git
 2025-06-05 09:17:16,203 - INFO - ThreadPoolExecutor cerrado.
 2025-06-05 09:17:16,224 - INFO - Script de aplicación de backup finalizado.
 2025-06-05 09:17:21,497 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:17:32,997 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 09:17:32,998 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 09:17:33,000 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:17:33,006 - INFO - Archivo 'backup_info.txt' no encontrado, iniciando contador de backup en 1.
+2025-06-05 09:17:33,008 - INFO - Ejecutando: git status --porcelain
+2025-06-05 09:17:33,084 - INFO - Verificar Estado Git finalizado. Código: 0
+Salida Estándar:
+M backup_git.log
+ M intro.py
+
+2025-06-05 09:17:33,085 - INFO - Cambios detectados o archivos no rastreados:
+M backup_git.log
+ M intro.py
+2025-06-05 09:17:33,089 - INFO - Ejecutando: git add .
+2025-06-05 09:17:33,167 - INFO - Git Add finalizado. Código: 0
+
+2025-06-05 09:17:33,168 - INFO - Realizando commit con mensaje: 'Backup automatico - 2025-06-05 09:17:33'...
+2025-06-05 09:17:33,173 - INFO - Ejecutando: git commit -m Backup automatico - 2025-06-05 09:17:33
+2025-06-05 09:17:33,315 - INFO - Git Commit finalizado. Código: 0
+Salida Estándar:
+[master 1bcae2e] Backup automatico - 2025-06-05 09:17:33
+ 2 files changed, 86 insertions(+), 1 deletion(-)
+
+2025-06-05 09:17:33,316 - INFO - Commit realizado exitosamente.
+2025-06-05 09:17:33,325 - INFO - Realizando push al repositorio remoto (git push)...
+2025-06-05 09:17:33,336 - INFO - Ejecutando: git push
+2025-06-05 09:17:35,295 - INFO - Git Push finalizado. Código: 0
+Salida de Error:
+To https://github.com/josdeath/frontendChat.git
+   93d9314..1bcae2e  master -> master
+
+2025-06-05 09:17:35,296 - INFO - Push realizado exitosamente.
+2025-06-05 09:17:35,303 - INFO - Número de backup 1 guardado en 'backup_info.txt'.
+2025-06-05 09:17:35,309 - INFO - Intento 1 finalizado en 2.31s con estado: SUCCESS
+2025-06-05 09:17:35,314 - INFO - Backup completado exitosamente después de 1 intento(s).
+2025-06-05 09:17:35,323 - INFO - Duración total del proceso: 2.32 segundos.
