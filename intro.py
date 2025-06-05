@@ -15,6 +15,7 @@ ARCHIVO_LOG = "backup_git.log"  # Nombre del archivo donde se guardarán los log
 MAX_REINTENTOS = 3  # Número máximo de reintentos para el proceso de backup completo
 TIMEOUT_POR_INTENTO_SEGUNDOS = 5 * 60  # 5 minutos de timeout para cada intento de backup
 RETRASO_ENTRE_REINTENTOS_SEGUNDOS = 10 # Tiempo de espera entre reintentos
+ARCHIVO_INFO_BACKUP = "backup_info.txt"  # Archivo para guardar información del backup
 
 # --- Configuración del Logging ---
 def configurar_logging():
@@ -30,7 +31,44 @@ def configurar_logging():
             # logging.StreamHandler()  # Descomentar esta línea para ver los logs también en la consola
         ]
     )
+# --- Funciones Auxiliares de Backup ---
 
+def get_next_backup_number(log_fn): # Pasamos log_fn para poder loguear desde aquí si es necesario
+    """
+    Obtiene el siguiente número de backup a utilizar.
+    Lee el último número guardado en ARCHIVO_INFO_BACKUP y le suma 1.
+    Si el archivo no existe o está corrupto, empieza desde 1.
+    """
+    if not os.path.exists(ARCHIVO_INFO_BACKUP):
+        if log_fn: log_fn(f"Archivo '{ARCHIVO_INFO_BACKUP}' no encontrado, iniciando contador de backup en 1.", "INFO")
+        return 1
+    try:
+        with open(ARCHIVO_INFO_BACKUP, 'r') as f:
+            last_backup_number = int(f.read().strip())
+            next_number = last_backup_number + 1
+            if log_fn: log_fn(f"Último número de backup leído: {last_backup_number}. Siguiente número: {next_number}", "INFO")
+            return next_number
+    except (ValueError, FileNotFoundError) as e:
+        # FileNotFoundError es redundante si ya comprobamos os.path.exists, pero por si acaso.
+        # ValueError si el contenido no es un número.
+        if log_fn: log_fn(f"Error al leer el número de backup de '{ARCHIVO_INFO_BACKUP}': {e}. Reiniciando a 1.", "WARNING")
+        return 1
+
+def save_backup_number(number, log_fn):
+    """
+    Guarda el número de backup proporcionado en ARCHIVO_INFO_BACKUP.
+    """
+    try:
+        with open(ARCHIVO_INFO_BACKUP, 'w') as f:
+            f.write(str(number))
+        if log_fn: log_fn(f"Número de backup {number} guardado en '{ARCHIVO_INFO_BACKUP}'.", "INFO")
+    except IOError as e:
+        # Usamos logging.error directamente aquí porque es un error crítico para esta función
+        # y log_fn podría ser None si se llama desde un contexto sin GUI.
+        logging.error(f"Error crítico al guardar el número de backup {number} en '{ARCHIVO_INFO_BACKUP}': {e}")
+        if log_fn: log_fn(f"Error al guardar el número de backup {number}: {e}", "ERROR")
+        # Considerar si se debe lanzar una excepción aquí para que el proceso de backup falle.
+        # Por ahora, solo lo logueamos.
 # --- Clase Principal de la Aplicación ---
 class AppBackup:
     """
@@ -167,6 +205,11 @@ class AppBackup:
         # (El cuerpo de esta función parece estar correcto y ya fue comentado en la versión anterior)
         self.loguear_mensaje("Iniciando intento de lógica de backup...", "INFO")
 
+        # --- Obtener número de backup ---
+        # Usamos self.loguear_mensaje como la función de log para get_next_backup_number
+        numero_backup_actual = get_next_backup_number(self.loguear_mensaje)
+
+        # --- 1. Verificar estado del repositorio Git ---
         stdout_status, _, rc_status = self.ejecutar_comando_git(
             ["git", "status", "--porcelain"], "Verificar Estado Git"
         )
@@ -185,7 +228,7 @@ class AppBackup:
             return "GIT_ADD_ERROR"
 
         current_date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        commit_message = f"Backup automático - {current_date_str}"
+        commit_message = f"Backup automatico - {current_date_str}"
         self.loguear_mensaje(f"Realizando commit con mensaje: '{commit_message}'...", "INFO")
         _, stderr_commit, rc_commit = self.ejecutar_comando_git(
             ["git", "commit", "-m", commit_message], "Git Commit"
@@ -206,6 +249,9 @@ class AppBackup:
             return "GIT_PUSH_ERROR"
 
         self.loguear_mensaje("Push realizado exitosamente.", "INFO")
+
+          # --- 5. Guardar el número de backup DESPUÉS de un push exitoso ---
+        save_backup_number(numero_backup_actual, self.loguear_mensaje)
         return "SUCCESS"
 
     # ESTE MÉTODO DEBE ESTAR CORRECTAMENTE INDENTADO COMO MÉTODO DE LA CLASE

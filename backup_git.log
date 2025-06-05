@@ -632,3 +632,42 @@ To https://github.com/josdeath/frontendChat.git
 2025-06-04 13:58:02,301 - INFO - Intento 1 finalizado en 2.28s con estado: SUCCESS
 2025-06-04 13:58:02,308 - INFO - Backup completado exitosamente después de 1 intento(s).
 2025-06-04 13:58:02,315 - INFO - Duración total del proceso: 2.30 segundos.
+2025-06-05 09:15:09,317 - INFO - Aplicación de backup iniciada en un repositorio Git.
+2025-06-05 09:15:12,301 - INFO - Iniciando proceso de backup con reintentos...
+2025-06-05 09:15:12,307 - INFO - --- Iniciando Intento de Backup 1/3 ---
+2025-06-05 09:15:12,310 - INFO - Iniciando intento de lógica de backup...
+2025-06-05 09:15:12,313 - INFO - Ejecutando: git status --porcelain
+2025-06-05 09:15:12,386 - INFO - Verificar Estado Git finalizado. Código: 0
+Salida Estándar:
+M backup_git.log
+
+2025-06-05 09:15:12,387 - INFO - Cambios detectados o archivos no rastreados:
+M backup_git.log
+2025-06-05 09:15:12,390 - INFO - Ejecutando: git add .
+2025-06-05 09:15:12,464 - INFO - Git Add finalizado. Código: 0
+
+2025-06-05 09:15:12,465 - INFO - Realizando commit con mensaje: 'Backup automático - 2025-06-05 09:15:12'...
+2025-06-05 09:15:12,469 - INFO - Ejecutando: git commit -m Backup automático - 2025-06-05 09:15:12
+2025-06-05 09:15:12,599 - INFO - Git Commit finalizado. Código: 0
+Salida Estándar:
+[master 93d9314] Backup automÃ¡tico - 2025-06-05 09:15:12
+ 1 file changed, 35 insertions(+)
+
+2025-06-05 09:15:12,599 - INFO - Commit realizado exitosamente.
+2025-06-05 09:15:12,607 - INFO - Realizando push al repositorio remoto (git push)...
+2025-06-05 09:15:12,614 - INFO - Ejecutando: git push
+2025-06-05 09:15:14,658 - INFO - Git Push finalizado. Código: 0
+Salida de Error:
+To https://github.com/josdeath/frontendChat.git
+   4f47100..93d9314  master -> master
+
+2025-06-05 09:15:14,659 - INFO - Push realizado exitosamente.
+2025-06-05 09:15:14,666 - INFO - Intento 1 finalizado en 2.36s con estado: SUCCESS
+2025-06-05 09:15:14,670 - INFO - Backup completado exitosamente después de 1 intento(s).
+2025-06-05 09:15:14,678 - INFO - Duración total del proceso: 2.36 segundos.
+2025-06-05 09:17:16,195 - INFO - Aplicación interrumpida por el usuario (Ctrl+C).
+2025-06-05 09:17:16,196 - INFO - Cerrando aplicación...
+2025-06-05 09:17:16,200 - INFO - Intentando cerrar el ThreadPoolExecutor...
+2025-06-05 09:17:16,203 - INFO - ThreadPoolExecutor cerrado.
+2025-06-05 09:17:16,224 - INFO - Script de aplicación de backup finalizado.
+2025-06-05 09:17:21,497 - INFO - Aplicación de backup iniciada en un repositorio Git.
