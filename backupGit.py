@@ -13,7 +13,7 @@ import socket # Para verificar la conexión de red
 # --- Configuración Global ---
 ARCHIVO_LOG = "backup_git.log"  # Nombre del archivo donde se guardarán los logs
 MAX_REINTENTOS = 3  # Número máximo de reintentos para el proceso de backup completo
-TIMEOUT_POR_INTENTO_SEGUNDOS = 5 * 60  # 5 minutos de timeout para cada intento de backup
+TIMEOUT_POR_INTENTO_SEGUNDOS = 1  # 5 minutos de timeout para cada intento de backup
 RETRASO_ENTRE_REINTENTOS_SEGUNDOS = 10 # Tiempo de espera entre reintentos
 ARCHIVO_INFO_BACKUP = "backup_info.txt"  # Archivo para guardar información del backup
 
