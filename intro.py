@@ -228,7 +228,7 @@ class AppBackup:
             return "GIT_ADD_ERROR"
 
         current_date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        commit_message = f"Backup automatico - {current_date_str}"
+        commit_message = f"Backup #{numero_backup_actual} - {current_date_str}"
         self.loguear_mensaje(f"Realizando commit con mensaje: '{commit_message}'...", "INFO")
         _, stderr_commit, rc_commit = self.ejecutar_comando_git(
             ["git", "commit", "-m", commit_message], "Git Commit"
