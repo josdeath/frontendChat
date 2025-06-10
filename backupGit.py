@@ -67,11 +67,12 @@ def get_next_backup_number(log_fn):
                 f"Archivo '{ARCHIVO_INFO_BACKUP}' no encontrado, iniciando contador de backup en 1.", "INFO")
         return 1
     try:
-        with open(ARCHIVO_INFO_BACKUP, 'r', encoding='utf-8') as f:
+        with open(ARCHIVO_INFO_BACKUP, 'r', encoding='utf-8') as f:  # Abre el archivo en modo lectura
             last_backup_number = int(f.read().strip())
-            next_number = last_backup_number + 1
+            next_number = last_backup_number + 1  # Incrementa el número de backup
             if log_fn:
                 log_fn(
+                    # Loguea el número de backup
                     f"Último número de backup leído: {last_backup_number}. Siguiente número: {next_number}", "INFO")
             return next_number
     except (ValueError, FileNotFoundError) as e:
